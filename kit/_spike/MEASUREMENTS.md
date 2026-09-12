@@ -40,6 +40,27 @@ everything below went through `--headless`.
 **Error-message quality (brief's column):** the single failure gave the exact file, exact
 line, the constant's name, and the actual rule that was broken. No guessing was needed.
 
+### Godot loop and persistence, verified deterministically
+
+`--headless --fixed-fps 60 --quit-after 3000` forces a constant delta per frame, so 3,000
+frames is exactly 50 s of game time regardless of wall clock — enough to run the 45 s
+shift to its fail state without anyone playing.
+
+**The first attempt was a false negative, and it was my slice's fault, not Godot's.**
+`best.cfg` was not written, because the save only fires on an *improved* score and a
+headless run completes nothing, so `0 > 0` was false. Added a `-- --autoserve` test hook
+that completes services without a finger. Then:
+
+| Check | Result |
+|---|---|
+| `user://best.cfg` written | **yes** — `[score] best=56` |
+| Value read back by a fresh process | **yes**, same value |
+| Services completed in a 45 s shift | 56, against a theoretical ceiling of 60 (4 lanes × 15 at 3 s) — the loop, lane resets and scoring all behave |
+| Errors or warnings during the run | none |
+
+The `--autoserve` hook also earns its keep on the phone: the device window can check
+persistence across a real `force-stop` without someone having to play first.
+
 **Code Claude wrote unaided:** all of it. No sample project, no scaffold, no editor.
 ~430 lines of GDScript plus a hand-written `.tscn`.
 

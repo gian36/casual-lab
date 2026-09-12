@@ -44,6 +44,7 @@ var _perf_window := 0.0
 var _fps := 0.0
 var _stress := 0
 var _stress_layer: Control
+var _autoserve := false
 
 
 func _ready() -> void:
@@ -64,6 +65,11 @@ func _ready() -> void:
 	_build_tray()
 	if "--shot" in OS.get_cmdline_user_args():
 		_capture_after_frames()
+	if "--autoserve" in OS.get_cmdline_user_args():
+		# Test hook, not gameplay: completes services without a finger, so a headless
+		# run can exercise the save path (which only writes on an improved score) and
+		# so the device window can check persistence without someone playing first.
+		_autoserve = true
 	%RetryButton.pressed.connect(_restart)
 	%StressButton.pressed.connect(func() -> void:
 		_stress += 100
@@ -134,6 +140,11 @@ func _process(delta: float) -> void:
 
 	_accumulated += delta
 	_time_left = maxf(0.0, SHIFT_SECONDS - _accumulated)
+
+	if _autoserve:
+		for lane in _lanes:
+			if lane.active_service == -1 and not lane.needs.is_empty():
+				_on_service_requested(lane, lane.needs[0])
 
 	for lane in _lanes:
 		var completed := lane.tick(delta)
