@@ -1,0 +1,36 @@
+; CL-01 engine spike — Godot slice. THROWAWAY. See ../README.md.
+; Hand-authored (not editor-saved) so the whole project stays text and reviewable.
+
+config_version=5
+
+[application]
+
+config/name="CL-01 Spike"
+run/main_scene="res://main.tscn"
+config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[display]
+
+; Slice requirement: portrait 9:16, scaled correctly on a real phone.
+window/size/viewport_width=1080
+window/size/viewport_height=1920
+; 1 == SCREEN_PORTRAIT
+window/handheld/orientation=1
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+
+[input_devices]
+
+; Godot's Control drag-and-drop is built on mouse events; this is what makes it
+; work under a finger. Set explicitly rather than relying on the default, because
+; whether drag feels right on device is one of the things the slice is measuring.
+pointing/emulate_mouse_from_touch=true
+
+[rendering]
+
+; gl_compatibility, not the Vulkan "mobile" renderer: the line targets cheap
+; Android phones and a 2D game gains nothing from Vulkan here. Recorded as a
+; deliberate choice, not a default.
+renderer/rendering_method="gl_compatibility"
+renderer/rendering_method.mobile="gl_compatibility"
+textures/vram_compression/import_etc2_astc=true

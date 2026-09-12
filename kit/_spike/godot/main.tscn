@@ -1,0 +1,123 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://main.gd" id="1_main"]
+
+[node name="Main" type="Control"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+script = ExtResource("1_main")
+
+[node name="Bg" type="ColorRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.075, 0.086, 0.11, 1)
+
+[node name="HUD" type="Control" parent="."]
+anchor_right = 1.0
+offset_bottom = 220.0
+
+[node name="TimeLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 32.0
+offset_top = 24.0
+offset_right = 700.0
+offset_bottom = 110.0
+theme_override_font_sizes/font_size = 64
+text = "0.0"
+
+[node name="ScoreLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 32.0
+offset_top = 118.0
+offset_right = 700.0
+offset_bottom = 170.0
+theme_override_font_sizes/font_size = 40
+text = "SERVED 0"
+
+[node name="BestLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 32.0
+offset_top = 168.0
+offset_right = 700.0
+offset_bottom = 212.0
+theme_override_font_sizes/font_size = 32
+theme_override_colors/font_color = Color(0.6, 0.64, 0.7, 1)
+text = "BEST 0"
+
+[node name="PerfLabel" type="Label" parent="HUD"]
+unique_name_in_owner = true
+offset_left = 700.0
+offset_top = 24.0
+offset_right = 1048.0
+offset_bottom = 212.0
+theme_override_font_sizes/font_size = 28
+theme_override_colors/font_color = Color(0.5, 0.75, 0.55, 1)
+horizontal_alignment = 2
+text = "perf"
+
+[node name="Lanes" type="VBoxContainer" parent="."]
+offset_left = 24.0
+offset_top = 230.0
+offset_right = 1056.0
+offset_bottom = 1540.0
+theme_override_constants/separation = 16
+
+[node name="Tray" type="HBoxContainer" parent="."]
+offset_left = 24.0
+offset_top = 1580.0
+offset_right = 1056.0
+offset_bottom = 1880.0
+theme_override_constants/separation = 16
+
+[node name="FailOverlay" type="Control" parent="."]
+unique_name_in_owner = true
+visible = false
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="Dim" type="ColorRect" parent="FailOverlay"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.72)
+
+[node name="FailLabel" type="Label" parent="FailOverlay"]
+offset_left = 80.0
+offset_top = 760.0
+offset_right = 1000.0
+offset_bottom = 900.0
+theme_override_font_sizes/font_size = 88
+theme_override_colors/font_color = Color(1, 0.42, 0.38, 1)
+horizontal_alignment = 1
+text = "SHIFT FAILED"
+
+[node name="FailDetail" type="Label" parent="FailOverlay"]
+unique_name_in_owner = true
+offset_left = 80.0
+offset_top = 910.0
+offset_right = 1000.0
+offset_bottom = 1000.0
+theme_override_font_sizes/font_size = 40
+theme_override_colors/font_color = Color(0.78, 0.8, 0.84, 1)
+horizontal_alignment = 1
+text = ""
+
+[node name="RetryButton" type="Button" parent="FailOverlay"]
+unique_name_in_owner = true
+offset_left = 320.0
+offset_top = 1060.0
+offset_right = 760.0
+offset_bottom = 1200.0
+theme_override_font_sizes/font_size = 56
+text = "RETRY"
+
+[node name="StressButton" type="Button" parent="."]
+unique_name_in_owner = true
+offset_left = 700.0
+offset_top = 1480.0
+offset_right = 1056.0
+offset_bottom = 1560.0
+theme_override_font_sizes/font_size = 28
+text = "stress +100"
+
+[node name="Sfx" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
