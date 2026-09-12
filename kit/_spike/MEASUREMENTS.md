@@ -75,12 +75,107 @@ and `platforms;android-36` installed. First APK came out on the next attempt.
 
 None of these needed a workaround that a script cannot repeat.
 
+---
+
+# Candidate C — web + Capacitor
+
+Stack chosen to be what the line would actually ship, not a straw man: **Phaser 4.2.1**
+(WebGL) + **Vite 8.3.0** + **Capacitor 8.5.2**, TypeScript under `strict`. Same slice,
+same geometry (the aircraft silhouette is the identical unit-space polygon), same
+procedurally generated one-shots, same measurements.
+
+## Install
+
+| Step | Result |
+|---|---|
+| `npm install phaser vite @capacitor/{core,cli,android}` | OK, one command, no account, no licence, ~40 s |
+| `npx cap add android` | OK, **141 ms** |
+| Android toolchain | reuses the JDK 17 + SDK already installed for Godot — no extra install |
+
+Capacitor's generated project pins **AGP 8.13.0** and **Gradle 8.14.3**.
+
+## Writing the slice
+
+| # | What happened | Cost |
+|---|---|---|
+| 1 | `vite build` succeeded on the **first** attempt — but Vite does not type-check, so this proves nothing about correctness. Installed `typescript` and ran `tsc --noEmit` under `strict`, which is the honest bar. | — |
+| 2 | **Correction 2.** `Phaser.Geom.Point` no longer exists in Phaser 4. Caught statically by `tsc`, with a "Did you mean 'POINT'?" hint. | 1 edit |
+| 3 | **Correction 3.** Phaser 4's `fillPoints` signature wants real `Phaser.Math.Vector2` instances, not `{x, y}` literals — a second, separate Phaser 4 API change in the same three lines. Also caught statically. | 1 edit |
+| 4 | Clean types, clean build, correct visuals on the first run in a browser. | — |
+| 5 | Parity pass: the first version omitted the service-name labels the Godot slice draws. Added as pooled text objects created once and repositioned, never per frame. | ~10 min |
+
+**Corrections: 3 (vs 1 for Godot)** — and all three were **Phaser 4 API drift**, not
+language or engine problems. This is the honest shape of the productivity difference:
+Claude's priors about Phaser are a major version out of date, while GDScript's surface
+had not moved under it. Both toolchains caught their errors **before the code ran** —
+Godot at import, TypeScript at `tsc`.
+
+**Code Claude wrote unaided:** all of it, ~430 lines of TypeScript.
+
+## Logic verified by driving the real handlers
+
+The browser pane used for automation is hidden, and a hidden page has
+`requestAnimationFrame` **paused outright** — `accumulated` advanced by exactly 0 over
+2 s while `actualFps` still reported a stale 45. So no desktop frame-pacing number is
+trustworthy here, and none is claimed. Instead the loop was stepped by hand and the
+real drag handlers were driven on the real tray zones:
+
+| Check | Result |
+|---|---|
+| Timer accuracy | 60 ticks at 16.67 ms → **exactly 1.00 s** of game time (44.886 → 43.89) |
+| Valid drop | real `dragstart`/`drag`/`dragend` on the tray zone → lane accepted, `activeService` = the wanted service |
+| Service completion | bar filled, `served` 0 → 1, the need removed from the lane |
+| Refused drop | dropping a service the lane does not need → no service started, refuse flash set |
+| Fail state | shift run to zero → `running` false, overlay visible, "SHIFT FAILED / served 1 · best 1" |
+| Persistence | `localStorage` written, and **`BEST 1` survived a full page reload** |
+
+**A real finding for this candidate, not an artefact of the tooling:** a WebView
+suspends the game when it loses visibility, and the `AudioContext` will not start at all
+before a user gesture — the slice has to call `unlock()` on first pointer-down. Neither
+native candidate has to think about either. The same class of thing appears in the CSS:
+`touch-action: none`, `user-select: none` and `overscroll-behavior: none` all had to be
+set explicitly or a finger would scroll or text-select the page out from under a drag.
+
+## Capacitor — build reality
+
+**Correction 4, and it is a toolchain finding, not a coding one.** The first Gradle build
+failed after 1 m 58 s with `error: invalid source release: 21`. Cause, read out of
+`node_modules/@capacitor/android/capacitor/build.gradle:66`: Capacitor 8 compiles against
+**`JavaVersion.VERSION_21`**. Godot 4.7 declares **JDK 17**. So the two candidates want
+**different JDKs**, and a machine that builds both needs both installed. Temurin 21
+installed via winget; the next build succeeded.
+
+| Measure | Capacitor | Godot (for comparison) |
+|---|---|---|
+| Debug APK | **4.34 MB** | 26.96 MB |
+| Release APK | not built (would need a release keystore) | 25.21 MB unsigned |
+| Cold build | ~2 min including dependency downloads; 55 s once warm | 10.4 s |
+| No-change rebuild | 12.2 s (`--no-daemon`) | 10.1 s |
+| **Full edit → APK** | **16.4 s** (`vite build` 0.54 s + `cap sync` + Gradle) | 10.1 s |
+| `targetSdkVersion` | **36** | 36 |
+| `minSdkVersion` | 24 | 24 |
+| Signing | v2 scheme, 1 signer | v2 + v3 |
+| Native `.so` in the APK | **none at all** | 2 (`libgodot_android`, `libc++_shared`) |
+| 16 KB page compliance | **trivially satisfied — there is no native code to align.** Note this changes the day the AdMob plugin arrives and brings the Google Mobile Ads native libraries with it | verified: `p_align = 16384` |
+| JDK required | **21** | **17** |
+
+**The size difference is the headline: 4.34 MB against 26.96 MB, roughly 6×.** For a
+free-with-ads line where install-size affects conversion, that is not a detail.
+
+**Not measured, and it matters:** Capacitor supports live-reload onto a running device
+(`cap run android --livereload`), where a JS edit lands in under a second with no rebuild
+at all — which would make the 16.4 s figure the *worst* case rather than the loop. Godot
+offers one-click deploy with remote debug and claims script hot-reload into a running
+remote instance. **Neither was tested**, because both need the phone. This is the single
+biggest open question on the iteration axis and it should not be guessed at.
+
 ## Still to measure (needs the phone)
 
-- Cold start on device, drag feel, audio latency, timer drift on device, `best.cfg`
-  surviving a real `force-stop`, sprite-count ceiling.
-
-Build reality above needed no phone at all.
+- Cold start on device, drag feel and touch latency, audio latency, timer drift on
+  device, persistence across a real `force-stop`, sprite-count ceiling.
+- **Live-reload loops for both candidates** — see above.
+- For Capacitor specifically: WebGL frame pacing in the Android System WebView, which is
+  the one thing the paper research could not settle and the desktop run could not measure.
 
 Device: **Samsung Galaxy S24 Ultra**, not currently at the desk. Noted for the Report:
 that is a flagship, and the brief asks for cold start on a **mid-range** device. Numbers

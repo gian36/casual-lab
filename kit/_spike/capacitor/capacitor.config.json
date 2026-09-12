@@ -1,0 +1,8 @@
+{
+  "appId": "com.gabella.cl01spikeweb",
+  "appName": "CL-01 Spike Web",
+  "webDir": "dist",
+  "android": {
+    "backgroundColor": "#131620"
+  }
+}
