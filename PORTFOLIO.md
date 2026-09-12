@@ -14,7 +14,7 @@ pre-production.
 |---|---|---|---|
 | CL-01 | founding | Engine for the kit (`LINE_CHARTER.md` [OPEN-K1]) — by spike, per studio S12. The spike is the line's first Claude Code session | RAISED |
 | CL-05 | 2026-09-11 | Backend posture for the line. Charter §6 makes "backend required = NO" a hard gate floor, but never asks whether a backend is *desirable* — and the standard fixes for weak retention (leaderboards, daily events, cloud save) all require one. Gian reserved this for its own session. Until ruled, every gate floor answer of NO is an answer about that concept's scope, not a line-wide ban | RAISED |
-| CL-06 | 2026-09-11 | Studio project number for C02 Flight Dispatch. Charter §2 assigns a studio number at GREEN, but numbers live in the studio ledger, which this space never edits. **005** is the apparent next free number (001 flag-carrier, 002 map-painter, 003 fellowship, 004 humanity) — needs a studio-side action to confirm and record | RAISED |
+| CL-06 | 2026-09-11 | Studio project number for C02 Flight Dispatch = **005**. Not a ruling to make: numbering is studio-wide across divisions and lines, already signed (S11, 2026-09-10; handbook "numbers are for shippable products only", S12; precedent — map-painter kept 002 when it moved lines, S10). Outstanding only as a clerical act: record 005 for C02 in the studio ledger, from the studio's own space | PENDING STUDIO ACTION |
 | CL-07 | 2026-09-11 | `../studio/templates/CASUAL_CONCEPT_GATE.template.md` numbering slip: the header says "Gian decides §15", but §15 is the Prototype test and the Decision is §17. Surfaced from the C02 gate run; fix belongs to the studio's own space | RAISED |
 
 Landed: CL-02 (kit is a tool, not a numbered project — studio S12, 2026-09-10) · CL-03
@@ -56,7 +56,8 @@ community — IDEAS 001 [OPEN-1]) · real-map data licensing ([OPEN-2]) · name 
 ## C02 — Flight Dispatch — casual apron management
 
 **Status: GREEN — Prototype** `[RULED by Gian, 2026-09-11]`. Gate run in the Hallway,
-2026-09-11. Studio number pending (CL-06). Next deliverable: a **Prototype Brief**, not a
+2026-09-11. **Studio project 005** (studio-wide numbering per S11; ledger entry pending —
+CL-06). Next deliverable: a **Prototype Brief**, not a
 GDD. Nothing below binds the design; it was written to decide GREEN, not to specify the
 game.
 
