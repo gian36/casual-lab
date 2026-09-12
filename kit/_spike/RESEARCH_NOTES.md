@@ -82,7 +82,7 @@ Verified against Unity's own release API (`services.api.unity.com/unity/editor/r
 | **Analytics** | Strongest of the three. `firebase/firebase-unity-sdk` **v13.16.0, 2026-08-27** — first-party Google, roughly three-week cadence (13.14.0 2026-07-17, 13.15.0 2026-08-06). Unity Gaming Services analytics also exists first-party. | GitHub API |
 | **Store compliance** | Unity 6 manual (`6000.2` docs, fetched 2026-09-12): *"You can now target Android API levels 35 and 36"*; minimum Android 6.0 / API 23. **16 KB pages supported**, with the documented caveat that *"Unity applications built for devices with 4 KB memory page size might not work on devices with 16 KB memory page size"* — a build-configuration matter, not automatic. | Unity manual |
 | **Longevity** | **Unity Personal is free below $200,000 USD total annual revenue *and funding*** — doubled from $100k — and the **Runtime Fee was cancelled outright**, both announced **2024-09-12** on Unity's own blog. The *Made with Unity* splash became **optional** for Unity Personal on Unity 6. Unity Pro is required above $200k; Enterprise above $25M. | unity.com blog 2024-09-12 (primary) |
-| | Pro list price: **$2,200/seat/yr from 2025-01-01** (primary, same blog), reported as **$2,310/seat/yr after a January 2026 increase** — **secondary source only; re-verify against Unity's own store before this enters the Report.** | secondary pricing coverage |
+| | **RESOLVED against Unity's own pricing page, fetched 2026-09-12:** Personal free below **$200K** revenue/funding in the prior 12 months; **Pro $210/month or $2,310/year**, required above $200K; Enterprise custom, required above **$25M**; Unity Industry custom, for non-gaming above $1M. The $2,200 figure in the 2024 blog has since risen to $2,310. | unity.com/pricing (primary) |
 | | The threshold is measured on the **whole company**, so it is a Gabella-level number, not a per-title one. Comfortable today; a term to re-read, not a cost. | reading of the policy |
 | | Plugin-abandonment risk materially lower than Godot's: Google is on the hook for ads, consent and analytics, Unity for IAP. | repo ownership |
 | **Cost to test** | Heaviest install of the three (Hub + editor + Android Build Support + NDK/SDK) and a licence sign-in. | environment probe |
@@ -99,7 +99,7 @@ Game framework would be Phaser **4.2.1, 2026-07-09**, or equivalent.
 | **Ads** | `@capacitor-community/admob` **8.1.0, published 2026-08-14**; repo pushed **2026-09-11**, 296 stars, not archived, and with an unusually healthy contributor spread for a community plugin (`rdlabo` 455, `distante` 54, `BETOXL` 25, `jcesarmobile` 17 — the last a Capacitor core maintainer). Wraps the native Google Mobile Ads SDK: banner, interstitial, rewarded, rewarded-interstitial, app-open. | npm registry + GitHub API |
 | **Consent** | **Covered.** README states it *"also covers Google User Messaging Platform (UMP) consent and App Tracking Transparency helpers on iOS"*; API surface includes `requestConsentInfo`, `showConsentForm`, `showPrivacyOptionsForm`, `resetConsentInfo`, against `com.google.android.ump:user-messaging-platform:4.0.0`. | README read |
 | | **Structural catch, from the plugin's own docs:** *"The banner sits above the WebView and can cover HTML"* — banner ads are native views composited over the web layer, so the game must inset its own layout. A real UI constraint the other two do not have. | README read |
-| **IAP** | Strong and vendor-backed rather than volunteer: `@revenuecat/purchases-capacitor` **13.5.1, 2026-09-10** (RevenueCat's own) and `cordova-plugin-purchase` **13.18.0, 2026-07-16** (Fovea). Billing Library version not verified at source — **do before the Report.** | npm registry |
+| **IAP** | Strong and vendor-backed rather than volunteer: `@revenuecat/purchases-capacitor` **13.5.1, 2026-09-10** (RevenueCat's own) and `cordova-plugin-purchase` **13.18.0, 2026-07-16** (Fovea). **RESOLVED at source:** the Capacitor plugin pulls `purchases-hybrid-common:18.38.0`, and `purchases-android` pins `billingClient = "8.3.0"` in its version catalogue — **clears the v8 bar**, same tier as Unity, a major behind Godot's 9.1.0. Its Android module also compiles at `JavaVersion.VERSION_21`, consistent with Capacitor 8's JDK 21 requirement. | source read, `libs.versions.toml` + plugin `build.gradle` |
 | **Analytics** | `@capacitor-firebase/analytics` **8.5.1, 2026-09-02** (Capawesome) and `@capacitor-community/firebase-analytics` **8.1.0, 2026-08-27**. Native Firebase Analytics, unlike Godot's REST-only situation. | npm registry |
 | **Store compliance** | `ionic-team/capacitor`, `android-template/variables.gradle`: `minSdkVersion 24`, `compileSdkVersion 36`, **`targetSdkVersion 36`**, `androidxWebkitVersion 1.14.0`, `cordovaAndroidVersion 14.0.1`. Passes the API-36 bar unpatched. | source read, main branch |
 | | 16 KB pages: the app's own code is JS, so the exposure is limited to plugin `.so` files and the system WebView — the lowest native-code surface of the three. Not verified per-plugin. | reasoning — flagged as unverified |
@@ -133,7 +133,24 @@ on-device feel** — plus, for Capacitor, whether a WebView can carry a 60 fps d
 
 ## Open, to resolve before the Report is frozen
 
-- Unity Pro's current per-seat price from Unity's own store (secondary source only so far).
-- Billing Library version inside `@revenuecat/purchases-capacitor` 13.5.1, read at source.
-- Whether the Godot billing plugin (built against 4.5.1) loads clean under 4.7.2.
-- Per-plugin 16 KB alignment for the Capacitor path.
+- ~~Unity Pro's current per-seat price from Unity's own store.~~ **RESOLVED 2026-09-12:**
+  $210/mo or $2,310/yr, Personal free below $200K, Enterprise above $25M.
+- ~~Billing Library version inside `@revenuecat/purchases-capacitor`.~~ **RESOLVED
+  2026-09-12:** Play Billing 8.3.0 via `purchases-hybrid-common` → `purchases-android`.
+- Whether the Godot billing plugin (built against 4.5.1) loads clean under 4.7.2. **Still
+  open** — needs a Gradle-build export with the plugin installed, which the slice did not
+  need and did not do.
+- Per-plugin 16 KB alignment for the Capacitor path. **Partly answered empirically:** the
+  Capacitor APK as built contains **no native `.so` at all**, so the question only arises
+  when the AdMob plugin brings the Google Mobile Ads native libraries in.
+
+## Play Billing standing, all three side by side
+
+| Candidate | Billing Library | Clears the v8 bar (since 2026-08-31)? | Headroom |
+|---|---|---|---|
+| Godot (`godot-google-play-billing` 3.3.0) | **9.1.0** | yes | to 2028-08-31 |
+| Unity (`com.unity.purchasing` 5.0.4) | 8.0.0 | yes | to 2027-08-31 |
+| Capacitor (RevenueCat 13.5.1) | 8.3.0 | yes | to 2027-08-31 |
+
+The community plugin is the one with the most runway. That is worth saying plainly,
+because it is the opposite of what the brief's framing expected.
