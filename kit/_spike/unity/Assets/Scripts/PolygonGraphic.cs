@@ -1,0 +1,106 @@
+// UGUI has no polygon primitive, so the aircraft silhouette needs a Graphic that
+// builds its own mesh. Keeps geometry parity with the Godot and Phaser slices: the
+// same unit-space outline, triangulated here because UGUI will not do it for us.
+// THROWAWAY.
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class PolygonGraphic : MaskableGraphic
+{
+    // Unit space, 0..1, y down — identical numbers to the other two slices.
+    public Vector2[] Points = new Vector2[0];
+
+    private static readonly List<int> Triangles = new List<int>(128);
+
+    protected override void OnPopulateMesh(VertexHelper vh)
+    {
+        vh.Clear();
+        if (Points == null || Points.Length < 3) return;
+
+        Rect r = GetPixelAdjustedRect();
+        var pixels = new Vector2[Points.Length];
+        for (int i = 0; i < Points.Length; i++)
+        {
+            pixels[i] = new Vector2(
+                r.x + Points[i].x * r.width,
+                r.y + (1f - Points[i].y) * r.height);
+            vh.AddVert(pixels[i], color, Vector2.zero);
+        }
+
+        Triangulate(pixels, Triangles);
+        for (int i = 0; i + 2 < Triangles.Count; i += 3)
+        {
+            vh.AddTriangle(Triangles[i], Triangles[i + 1], Triangles[i + 2]);
+        }
+    }
+
+    // Ear clipping. The silhouette is concave (wings and tail cut into it), so a
+    // triangle fan would render it wrong.
+    private static void Triangulate(Vector2[] poly, List<int> outTriangles)
+    {
+        outTriangles.Clear();
+        int n = poly.Length;
+        if (n < 3) return;
+
+        var indices = new List<int>(n);
+        if (SignedArea(poly) > 0f)
+            for (int i = 0; i < n; i++) indices.Add(i);
+        else
+            for (int i = n - 1; i >= 0; i--) indices.Add(i);
+
+        int guard = indices.Count * indices.Count;
+        while (indices.Count > 2 && guard-- > 0)
+        {
+            bool clipped = false;
+            for (int i = 0; i < indices.Count; i++)
+            {
+                int i0 = indices[(i + indices.Count - 1) % indices.Count];
+                int i1 = indices[i];
+                int i2 = indices[(i + 1) % indices.Count];
+
+                Vector2 a = poly[i0], b = poly[i1], c = poly[i2];
+                if (Cross(b - a, c - b) <= 0f) continue;  // reflex, not an ear
+
+                bool contains = false;
+                foreach (int j in indices)
+                {
+                    if (j == i0 || j == i1 || j == i2) continue;
+                    if (InTriangle(poly[j], a, b, c)) { contains = true; break; }
+                }
+                if (contains) continue;
+
+                outTriangles.Add(i0);
+                outTriangles.Add(i1);
+                outTriangles.Add(i2);
+                indices.RemoveAt(i);
+                clipped = true;
+                break;
+            }
+            if (!clipped) break;  // degenerate input; draw what we have
+        }
+    }
+
+    private static float SignedArea(Vector2[] p)
+    {
+        float sum = 0f;
+        for (int i = 0; i < p.Length; i++)
+        {
+            Vector2 a = p[i], b = p[(i + 1) % p.Length];
+            sum += (b.x - a.x) * (b.y + a.y);
+        }
+        return sum;
+    }
+
+    private static float Cross(Vector2 a, Vector2 b) => a.x * b.y - a.y * b.x;
+
+    private static bool InTriangle(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
+    {
+        float d1 = Cross(b - a, p - a);
+        float d2 = Cross(c - b, p - b);
+        float d3 = Cross(a - c, p - c);
+        bool neg = d1 < 0f || d2 < 0f || d3 < 0f;
+        bool pos = d1 > 0f || d2 > 0f || d3 > 0f;
+        return !(neg && pos);
+    }
+}

@@ -169,7 +169,63 @@ offers one-click deploy with remote debug and claims script hot-reload into a ru
 remote instance. **Neither was tested**, because both need the phone. This is the single
 biggest open question on the iteration axis and it should not be guessed at.
 
-## Still to measure (needs the phone)
+---
+
+# Candidate B — Unity
+
+Editor: **Unity 6.3 LTS (`6000.3.24f1`, released 2026-09-10)**, confirmed available via
+the Hub's own `--headless editors --releases`.
+
+## Install — the one candidate that fought back
+
+| Step | Result |
+|---|---|
+| `winget install Unity.UnityHub` | **Reported "Successfully installed" and installed nothing.** No `Unity Hub.exe`, no registry entry. Cause found in the winget manifest: the NSIS installer is `Scope: machine`, so it needs elevation, and non-interactively it silently no-ops |
+| Official `UnityHubSetup.exe` from the documented CDN path | **404 Not Found** — that URL is dead; the current ones are versioned (`.../hub/prod/3.21.2/UnityHubSetup-3.21.2-x64.exe`) |
+| **MSIX variant**, `Add-AppxPackage` | **Worked**, per-user, no admin, 238.9 MB |
+| Hub CLI without sign-in | Works — `--headless editors --releases` listed 6000.7.0a6 / 6000.3.24f1 / 6000.0.83f1 / 6000.6.0f1 |
+| First `--headless install` | No-op. The MSIX sandbox could not write its cache (`Unable to move the cache: Acceso denegado`) and the default install path is under `%ProgramFiles%`, which needs admin |
+| After `ip -s C:\Users\gianv\Unity\Editor` | **Downloads started.** The CLI also *detaches* — a second invocation prints `attaching to existing in-flight download` and exits −1, which is why the first attempts looked like silent failures |
+| Download size | **3.7 GB and still climbing** at the time of writing, against Godot's ~1.2 GB of export templates and Capacitor's ~40 s of npm |
+
+Modules pulled as dependencies of `android-sdk-ndk-tools`: NDK r27c, CMake 3.22.1,
+build-tools 36.0.0, platform-tools 36.0.0, platforms 34/35/36/37, cmdline-tools 16.0.
+**Unity brings its own complete Android toolchain**, so it does not care that Godot wants
+JDK 17 and Capacitor wants JDK 21 — a real advantage the other two do not have.
+
+**The finding that matters for this line:** Unity is the only candidate that could not be
+provisioned unattended. Godot went in with one `winget` command and two direct downloads;
+Capacitor with one `npm install`. Unity needed a package-format workaround, an install-path
+change, and diagnosis of a detaching CLI — and it is **still gated on a Unity account
+sign-in** before the editor will run at all, which is Gian's to do and cannot be automated.
+For a line whose premise is remote, low-attention work, that is evidence, not trivia.
+
+## Writing the slice
+
+Written while the editor downloaded, so it is ready for the licensed window:
+
+- `SpikeBootstrap.cs` — the whole slice, building its UI in code rather than in a `.unity`
+  scene, so it stays text-reviewable and diffable like the other two. Unity scene YAML is
+  GUID-bound and not sensibly hand-written.
+- `PolygonGraphic.cs` — UGUI has no polygon primitive, so the aircraft needs a `Graphic`
+  that builds its own mesh, **including an ear-clipping triangulator**: the silhouette is
+  concave, so a triangle fan renders it wrong. Godot and Phaser both took the same polygon
+  as a one-line call. This is the clearest single example of Unity's floor being higher
+  for 2D work.
+- `LanePanel.cs`, `TrayButton.cs`, `SpikeSfx.cs` — same behaviour, same procedural audio.
+- `Editor/SpikeBuild.cs` — batch-mode build: creates the scene, sets arm64-only, IL2CPP,
+  portrait, min SDK 24 / target 36, and builds the APK, so the licensed window is one
+  command rather than an editor session.
+
+**Not yet compiled.** No correction count can be claimed for Unity until it builds, and
+none is claimed. Everything above is code written against the API, not code proven.
+
+## Still to measure
+
+**Unity, blocked on sign-in:** compile, correction count, APK size, build time, and every
+on-device number.
+
+**All three, blocked on the phone:**
 
 - Cold start on device, drag feel and touch latency, audio latency, timer drift on
   device, persistence across a real `force-stop`, sprite-count ceiling.
