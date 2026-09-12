@@ -1,6 +1,6 @@
 # LINE_CHARTER.md — Casual Lab (working name)
 
-**Status:** DRAFT, founded from `studio/HANDOFF_CASUAL_LAB_FOUNDING.md` on ____-__-__.
+**Status:** DRAFT, founded from `studio/HANDOFF_CASUAL_LAB_FOUNDING.md` on 2026-09-11.
 Signed clauses carry `[RULED by Gian, date]`; unsigned ones are proposals.
 **Purpose:** everything that makes this line different from the Core line, in one place.
 What is not here is inherited unchanged from `../studio/STUDIO_HANDBOOK.md`.
@@ -97,4 +97,4 @@ better understood.
   before the first game repo exists).
 
 ## Changelog
-- ____-__-__ — founded from the studio handoff; clauses pending signature.
+- 2026-09-11 — founded from the studio handoff; clauses pending signature.
