@@ -50,11 +50,37 @@ Gian's instead of the game. Deleted immediately, and replaced with an engine-sid
 see the game's own viewport. Recorded here because the kit will need a screenshot ritual
 for store assets later, and it should be the engine-side one.
 
-## Still to measure (needs the SDK licence, then the phone)
+## Godot — build reality (SDK licences accepted by Gian, 2026-09-12)
 
-- APK size, cold build time, incremental build time — **these need only the licence, not the phone.**
+Licences accepted on Gian's authorisation; `platform-tools 37.0.1`, `build-tools 36.0.0`
+and `platforms;android-36` installed. First APK came out on the next attempt.
+
+| Measure | Value | How |
+|---|---|---|
+| Debug APK, arm64-v8a only | **26.96 MB** | prebuilt template path (`use_gradle_build=false`) |
+| Release APK, arm64-v8a only | **25.21 MB**, unsigned | export reports failure at the signing step because no release keystore exists — deliberately not created. Size is indicative, the payload is complete |
+| Cold export | **10.4 s** | first export after a fresh import |
+| Repeat export | **10.1 s** | no meaningful incremental saving at this project size |
+| `targetSdkVersion` | **36** | `aapt2 dump badging` on the produced APK |
+| `minSdkVersion` / `compileSdkVersion` | 24 / 36 | same |
+| Signing | **v2 + v3 APK Signature Schemes**, 1 signer | `apksigner verify -v` |
+| **16 KB page compliance** | **PASS, verified empirically** | `PT_LOAD p_align = 16384` on both `libgodot_android.so` and `libc++_shared.so`, parsed straight out of the ELF program headers of the APK Godot just produced. Not taken from a changelog |
+
+**Toolchain friction on Windows — all minor, all one-time:**
+
+- `sdkmanager --licenses` ignores piped input from PowerShell; it needs `cmd /c "... < file"`.
+- `Expand-Archive` refuses a `.tpz` by extension; copy to `.zip` first.
+- `apksigner.bat` needs `JAVA_HOME` in the calling shell even though Godot itself does not.
+- `winget` could not create the `godot` PATH alias without admin, so the exe is called by full path.
+
+None of these needed a workaround that a script cannot repeat.
+
+## Still to measure (needs the phone)
+
 - Cold start on device, drag feel, audio latency, timer drift on device, `best.cfg`
-  surviving a real `force-stop`, sprite-count ceiling — **these need the phone.**
+  surviving a real `force-stop`, sprite-count ceiling.
+
+Build reality above needed no phone at all.
 
 Device: **Samsung Galaxy S24 Ultra**, not currently at the desk. Noted for the Report:
 that is a flagship, and the brief asks for cold start on a **mid-range** device. Numbers
