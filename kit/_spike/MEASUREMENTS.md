@@ -207,19 +207,26 @@ the Hub's own `--headless editors --releases`.
 | Hub CLI without sign-in | Works — `--headless editors --releases` listed 6000.7.0a6 / 6000.3.24f1 / 6000.0.83f1 / 6000.6.0f1 |
 | First `--headless install` | No-op. The MSIX sandbox could not write its cache (`Unable to move the cache: Acceso denegado`) and the default install path is under `%ProgramFiles%`, which needs admin |
 | After `ip -s C:\Users\gianv\Unity\Editor` | **Downloads started.** The CLI also *detaches* — a second invocation prints `attaching to existing in-flight download` and exits −1, which is why the first attempts looked like silent failures |
-| Download size | **3.7 GB and still climbing** at the time of writing, against Godot's ~1.2 GB of export templates and Capacitor's ~40 s of npm |
+| Download size | **7.75 GB**, against Godot's ~1.2 GB of export templates and Capacitor's ~40 s of npm |
+| Install after the download | **FAILED**, 12.3 min in: `[Unity (6000.3.24f1)] failed to install. Error given: The Windows elevation prompt was cancelled or timed out.` The 7.75 GB downloaded fine; the install step itself needs **UAC**, which no unattended session can answer |
 
 Modules pulled as dependencies of `android-sdk-ndk-tools`: NDK r27c, CMake 3.22.1,
 build-tools 36.0.0, platform-tools 36.0.0, platforms 34/35/36/37, cmdline-tools 16.0.
 **Unity brings its own complete Android toolchain**, so it does not care that Godot wants
 JDK 17 and Capacitor wants JDK 21 — a real advantage the other two do not have.
 
-**The finding that matters for this line:** Unity is the only candidate that could not be
-provisioned unattended. Godot went in with one `winget` command and two direct downloads;
-Capacitor with one `npm install`. Unity needed a package-format workaround, an install-path
-change, and diagnosis of a detaching CLI — and it is **still gated on a Unity account
-sign-in** before the editor will run at all, which is Gian's to do and cannot be automated.
-For a line whose premise is remote, low-attention work, that is evidence, not trivia.
+**The finding that matters for this line, now settled rather than suspected:** Unity is the
+only candidate that **cannot** be provisioned unattended. Godot went in with one `winget`
+command and two direct downloads; Capacitor with one `npm install`. Unity needed a
+package-format workaround, an install-path change, diagnosis of a detaching CLI, 7.75 GB,
+and then still stopped dead at a **UAC elevation prompt** — with a **Unity account sign-in**
+waiting behind that before the editor will run at all.
+
+That is **two human gates to Godot's zero and Capacitor's zero**. For a line whose stated
+premise is remote, low-attention work driven from a phone, this is not a one-time setup
+annoyance to be waved away: it is the candidate telling you what working with it is like.
+Whether it outweighs Unity's first-party monetization backing is Gian's call, not the
+spike's — but it belongs on the scale.
 
 ## Writing the slice
 
