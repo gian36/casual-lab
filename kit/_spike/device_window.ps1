@@ -169,6 +169,28 @@ Read-Host "press Enter when you have that number"
 
 # --- 3. install and cold start -------------------------------------------------------
 
+Say "2b. rebuild the Capacitor APK without live reload"
+# cap run -l builds the APK with the live-reload URL (http://localhost:5173) baked into its
+# packaged capacitor.config.json. Restoring the config afterwards does not change that APK, so
+# installing it for cold start would time a WebView pointed at a dev server that has already
+# been stopped. Rebuild from a clean production bundle first. (Found 2026-09-13, pre-flight.)
+$capDir = Join-Path $spike "capacitor"
+$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.12.101-hotspot"
+$env:ANDROID_HOME = $sdk
+Push-Location $capDir
+& npx vite build
+& npx cap sync android
+Push-Location (Join-Path $capDir "android")
+& .\gradlew.bat assembleDebug --no-daemon -q
+Pop-Location
+Pop-Location
+$packagedCfg = Join-Path $capDir "android\app\src\main\assets\capacitor.config.json"
+if ((Test-Path $packagedCfg) -and ((Get-Content $packagedCfg -Raw) -match '"url"')) {
+    Write-Host "  WARNING: packaged Capacitor config still has a server url - Capacitor cold start would be invalid" -ForegroundColor Red
+} else {
+    Write-Host "  Capacitor APK rebuilt without live reload" -ForegroundColor DarkGray
+}
+
 Say "3. cold start"
 
 $godotApk = "$spike\godot\build\cl01-spike.apk"

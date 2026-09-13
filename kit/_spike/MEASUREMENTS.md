@@ -480,6 +480,29 @@ Ctrl+C ending the whole script. One more reached Gian (the relative path). Every
 Claude-written script and every one was found by checking the command against the actual
 tool — its help, its source, or the built APK — rather than recalling it.
 
+### Phone connected (2026-09-13, 14:42)
+
+Gian installed the Samsung Android USB Driver v1.9.5.0 and accepted the RSA prompt. After an
+adb server restart: `R5CX21TWDZN device product:e3qxxx model:SM_S928B`. The ADB interface
+GUID is now registered, and `cmd package resolve-activity` works on the device, so the
+script's launcher resolution is sound.
+
+| Property | Value | Why it matters |
+|---|---|---|
+| Model | **SM-S928B** (Galaxy S24 Ultra) | flagship — see the reference-device `[OPEN]` |
+| Android / API | **16 / 36** | same as every APK's targetSdk |
+| One UI | 8.5 (`80500`) | |
+| ABI | arm64-v8a | matches all three arm64-only APKs |
+| Screen | 1440 × 3120 | portrait 9:16-ish; each slice scales to fit |
+| **Page size** | **4096 bytes** | **the phone runs 4 KB pages, so 16 KB behaviour cannot be exercised on this device.** The 16 KB results in this spike stay APK-level (ELF `p_align`), not runtime-verified |
+| Stay awake | off (`stay_on_while_plugged_in = 0`) | the screen can lock mid-run and distort cold start; Gian asked to enable it for the session |
+
+**One more pre-flight catch, the fifth:** `cap run -l` builds the APK with
+`http://localhost:5173` baked into its packaged `capacitor.config.json`. Restoring the config
+afterwards does not rebuild that APK, so the cold-start step would have installed it and timed a
+WebView pointed at a stopped dev server. The script now rebuilds the Capacitor APK from a clean
+production bundle between live reload and cold start, and warns if a server URL is still packaged.
+
 **What this says about the productivity axis.** Correction counts alone flatter Unity here.
 Godot's `draw_colored_polygon` and Phaser's `fillPoints` triangulate internally; UGUI made
 Claude write a triangulator, and it was wrong in a way no compiler could catch. The clock bug is
