@@ -551,6 +551,55 @@ install toolchains to explicit paths outside AppData, and verification must be r
 founder actually uses, not only from Claude's processes. Proposed as an `[OPEN]` for the line's
 machine-setup doctrine.
 
+### Device results — first attended run (2026-09-13, 15:16–15:20)
+
+Run by Gian from the Claude app's Terminal panel after the SDK move; all three APKs installed at
+15:16:56 / 15:17:08 / 15:17:25. Raw output kept in `device_results.json`.
+
+**Cold start** — `am start -W` `TotalTime`, 5 launches each, `force-stop` before every launch, debug
+builds, SM-S928B, Android 16:
+
+| Engine | Median | Min | Max | All five |
+|---|---|---|---|---|
+| **Unity** 6.3 (Development, IL2CPP) | **305 ms** | 283 | 375 | 375, 305, 305, 308, 283 |
+| **Godot** 4.7.2 (debug template) | **323 ms** | 304 | 456 | 456, 315, 340, 323, 304 |
+| **Capacitor** 8.5.2 + Phaser 4 (debug) | **408 ms** | 391 | 529 | 529, 391, 436, 408, 402 |
+
+What these numbers can and cannot say:
+
+- **Unity and Godot are level** — 18 ms apart, well inside each other's spread. **Capacitor is ~85–100
+  ms slower at the median**, consistent with WebView start-up in front of the game.
+- The **first launch in every series is the slowest** (456 / 529 / 375 ms): the first cold start after a
+  fresh install pays for caches the later ones reuse.
+- `TotalTime` ends when the activity draws its first frame. For Godot and Unity that is the engine's
+  surface; for Capacitor it is the native activity, **not** the WebView finishing the page. So these are
+  time-to-first-activity-frame, not time-to-playable — a like-for-like proxy, not the player's
+  experience.
+- **Flagship phone, debug builds.** Every number here will be kinder than on the mid-range device the brief
+  asked about (see the reference-device `[OPEN]`), and release builds may differ.
+
+**Live reload (step 1): not measured.** The second window's `cap run` exited before building and nothing
+reached the phone; the Vite dev server also stopped. The error text was never captured. Separately
+verified from Claude's side: target detection works (`R5CX21TWDZN` listed) and the Gradle build
+succeeds in that window's environment in 20 s — so the failure is elsewhere, still unknown.
+
+**Godot remote deploy (step 2): not reported.**
+
+**Logcat scan (step 4): mislabeled, and clean.** The lines captured under "Godot" include a Swappy line
+naming `libgame.so`, which is Unity's library — the scan picked up Unity's still-running process, so it
+is not a per-app scan. What it caught is system graphics noise (Gralloc 4×4 buffer probes, Adreno QSPM).
+Other error lines seen for all three apps (`AppOps attributionTag not declared`,
+`libpenguin.so dlopen failed`) are Samsung system noise. **The crash buffer is empty: no crashes or
+ANRs in any of the three.**
+
+**Persistence (step 5): verification in progress.** Gian played each game to SHIFT FAILED and relaunched
+after a real `force-stop`. Reading app storage directly: Godot's data directory holds **no `best.cfg`**
+(only `shader_cache`) — the save fires only on an improved score, and step 3's reinstall wiped any
+earlier data, so this needs Gian's account of whether any aircraft were served. Unity's and Capacitor's
+stored values are still being read.
+
+**Judgement items — drag feel, stress ceiling, audio: pending Gian's report.**
+
 **What this says about the productivity axis.** Correction counts alone flatter Unity here.
 Godot's `draw_colored_polygon` and Phaser's `fillPoints` triangulate internally; UGUI made
 Claude write a triangulator, and it was wrong in a way no compiler could catch. The clock bug is

@@ -1,0 +1,22 @@
+﻿{
+    "device":  "SM-S928B - Android 16 (API 36) - arm64-v8a - page size 4096 bytes",
+    "godot_cold_start_ms":  {
+                                "median":  323,
+                                "min":  304,
+                                "max":  456,
+                                "all":  "456, 315, 340, 323, 304"
+                            },
+    "capacitor_cold_start_ms":  {
+                                    "median":  408,
+                                    "min":  391,
+                                    "max":  529,
+                                    "all":  "529, 391, 436, 408, 402"
+                                },
+    "unity_cold_start_ms":  {
+                                "median":  305,
+                                "min":  283,
+                                "max":  375,
+                                "all":  "375, 305, 305, 308, 283"
+                            },
+    "godot_logcat_errors":  "--------- beginning of main\nE/Adreno-AppProfiles( 4880): QSPM AIDL service doesn\u0027t exist\nE/Gralloc4( 4880): isSupported(1, 1, 59, 1, ...) failed with 7\nE/GraphicBufferAllocator( 4880): Failed to allocate (4 x 4) layerCount 1 format 59 usage b00: 2\nE/AHardwareBuffer( 4880): GraphicBuffer(w=4, h=4, lc=1) failed (Unknown error -2), handle=0x0\nE/Gralloc4( 4880): isSupported(1, 1, 59, 1, ...) failed with 7\nE/GraphicBufferAllocator( 4880): Failed to allocate (4 x 4) layerCount 1 format 59 usage b00: 2\nE/AHardwareBuffer( 4880): GraphicBuffer(w=4, h=4, lc=1) failed (Unknown error -2), handle=0x0\nE/SwappyDisplayManager( 4880): dalvik.system.InMemoryDexClassLoader[DexPathList[[dex file \"InMemoryDexFile[cookie=[0, -5476376611651416112]]\"],nativeLibraryDirectories=[/system/lib64, /system_ext/lib64]]] couldn\u0027t find \"libgame.so\"\n--------- beginning of system"
+}
