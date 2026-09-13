@@ -1,4 +1,4 @@
-# CL-01 — build the Unity slice once the editor is installed and licensed. THROWAWAY.
+# CL-01 - build the Unity slice once the editor is installed and licensed. THROWAWAY.
 #
 # Run this after Unity Hub has signed in and installed 6000.3.24f1 with Android Build
 # Support. Everything before that needs UAC and a Unity account, neither of which an
@@ -53,7 +53,7 @@ if (Test-Path $apk) {
         & "$bt\zipalign.exe" -c -P 16 -v 4 $apk 2>&1 | Select-String "\.so|Verification"
     }
 } else {
-    Write-Host "NO APK produced — see $log" -ForegroundColor Red
+    Write-Host "NO APK produced - see $log" -ForegroundColor Red
 }
 
 Write-Host "`nFull log: $log"

@@ -1,4 +1,4 @@
-# CL-01 — the attended device window, scripted. THROWAWAY.
+# CL-01 - the attended device window, scripted. THROWAWAY.
 #
 # Everything here runs unattended once the phone is connected and authorised. Gian's
 # part is three things: enable Developer options, turn on USB debugging, and accept the
@@ -29,7 +29,7 @@ while ((Get-Date) -lt $deadline) {
     $devices = & $adb devices | Select-Object -Skip 1 | Where-Object { $_ -match "\S" }
     if ($devices -match "\bdevice$") { break }
     if ($devices -match "unauthorized") {
-        Write-Host "Device connected but UNAUTHORISED — accept the RSA prompt on the phone." -ForegroundColor Yellow
+        Write-Host "Device connected but UNAUTHORISED - accept the RSA prompt on the phone." -ForegroundColor Yellow
     }
     Start-Sleep -Seconds 3
 }
@@ -41,7 +41,7 @@ $release = (& $adb shell getprop ro.build.version.release).Trim()
 $api = (& $adb shell getprop ro.build.version.sdk).Trim()
 $abi = (& $adb shell getprop ro.product.cpu.abi).Trim()
 $pageSize = (& $adb shell getconf PAGE_SIZE).Trim()
-$results["device"] = "$model · Android $release (API $api) · $abi · page size $pageSize bytes"
+$results["device"] = "$model - Android $release (API $api) - $abi - page size $pageSize bytes"
 Write-Host $results["device"] -ForegroundColor Green
 
 # The 16 KB page-size question is only real on a device actually configured for it.
@@ -80,7 +80,7 @@ function Measure-ColdStart($package, $activity, $runs) {
 function Test-Persistence($package, $activity, $label) {
     # The point is a real process death, not an activity restart: play, force-stop,
     # relaunch, and see whether the best score came back.
-    Write-Host "  $label — play until the shift fails, then press Enter" -ForegroundColor Yellow
+    Write-Host "  $label - play until the shift fails, then press Enter" -ForegroundColor Yellow
     & $adb shell am start -n "$package/$activity" | Out-Null
     Read-Host "  press Enter once you have seen SHIFT FAILED"
     & $adb shell am force-stop $package | Out-Null
@@ -154,5 +154,5 @@ $results | ConvertTo-Json -Depth 5 | Set-Content -Path $out -Encoding utf8
 $results | Format-List
 Write-Host "`nwritten to $out" -ForegroundColor Green
 Write-Host "Drag feel, audio latency, timer drift and the sprite-count ceiling are read off" -ForegroundColor Yellow
-Write-Host "the on-screen perf readout by hand — they are judgements, not numbers a script" -ForegroundColor Yellow
+Write-Host "the on-screen perf readout by hand - they are judgements, not numbers a script" -ForegroundColor Yellow
 Write-Host "can take honestly." -ForegroundColor Yellow
