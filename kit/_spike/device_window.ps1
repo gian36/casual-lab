@@ -13,8 +13,20 @@ param(
 )
 
 $ErrorActionPreference = "Stop"
-$sdk = "$env:LOCALAPPDATA\Android\Sdk"
-$adb = "$sdk\platform-tools\adb.exe"
+# Resolve the Android SDK explicitly. Found 2026-09-13: the SDK installed during this spike by
+# Claude's tools landed in the Claude desktop app's MSIX-redirected storage
+# (%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Local\Android\Sdk). Claude's own
+# processes saw it at %LOCALAPPDATA%\Android\Sdk; Gian's shells did not, so the first adb call
+# failed with CommandNotFound. The SDK now lives at C:\Android\Sdk, outside AppData.
+$candidates = @("C:\Android\Sdk", $env:ANDROID_HOME, $env:ANDROID_SDK_ROOT, "$env:LOCALAPPDATA\Android\Sdk") | Where-Object { $_ }
+$sdk = $null
+foreach ($c in $candidates) { if (Test-Path (Join-Path $c "platform-tools\adb.exe")) { $sdk = $c; break } }
+if (-not $sdk) {
+    Write-Host ("adb.exe not found under: " + ($candidates -join "; ")) -ForegroundColor Red
+    exit 1
+}
+$adb = Join-Path $sdk "platform-tools\adb.exe"
+Write-Host ("Android SDK: " + $sdk) -ForegroundColor DarkGray
 $spike = Split-Path -Parent $MyInvocation.MyCommand.Path
 $results = [ordered]@{}
 

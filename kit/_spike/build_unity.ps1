@@ -47,7 +47,7 @@ if (Test-Path $apk) {
     Write-Host "`nCompare against: Godot 26.96 MB debug / 25.21 MB release, Capacitor 4.34 MB debug."
 
     # Same compliance checks the other two got, so the three rows are comparable.
-    $bt = "$env:LOCALAPPDATA\Android\Sdk\build-tools\36.0.0"
+    $bt = "C:\Android\Sdk\build-tools\36.0.0"
     if (Test-Path "$bt\aapt2.exe") {
         Write-Host "`n=== manifest ===" -ForegroundColor Cyan
         & "$bt\aapt2.exe" dump badging $apk 2>&1 |
