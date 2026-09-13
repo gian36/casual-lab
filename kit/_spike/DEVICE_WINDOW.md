@@ -28,8 +28,10 @@ module then installed without a UAC prompt, and the Unity slice builds with
 Then, in a terminal here:
 
 ```bash
-powershell -File kit/_spike/device_window.ps1
+powershell -ExecutionPolicy Bypass -File C:Devgabellacasual-labkit_spikedevice_window.ps1
 ```
+
+Use the full path: it works from any folder the terminal happens to be open in.
 
 Add `-SkipUnity` if the Unity build has not happened yet.
 
