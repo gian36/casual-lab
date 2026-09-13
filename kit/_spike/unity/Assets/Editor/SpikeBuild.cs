@@ -32,7 +32,9 @@ public static class SpikeBuild
             targetGroup = BuildTargetGroup.Android,
             // CleanBuildCache: an incremental build left 13.57 MB of dead space in the APK
             // (see MEASUREMENTS.md), so the APK that goes on the phone is always built clean.
-            options = BuildOptions.Development | BuildOptions.CleanBuildCache,
+            // SPIKE_INCREMENTAL=1 skips CleanBuildCache, for timing the edit->device loop the way a
+            // developer would actually iterate. Default stays clean, for honest APK sizes.
+            options = BuildOptions.Development | (Environment.GetEnvironmentVariable("SPIKE_INCREMENTAL") == "1" ? BuildOptions.None : BuildOptions.CleanBuildCache),
         };
 
         var report = BuildPipeline.BuildPlayer(options);

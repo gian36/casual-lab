@@ -687,6 +687,35 @@ real `force-stop`, and no frame was dropped while dragging at each engine's fram
 - **Godot remote deploy: not tried.** The on-device edit→see loop for Godot, and Capacitor's live reload,
   remain unmeasured.
 
+### Edit → running on device loop (2026-09-13, 15:40–15:44) — `iteration_loop.sh`
+
+Gian did not try Godot's Remote Deploy, and Capacitor live reload failed in his session, so Claude measured
+the plain rebuild loop every engine has: change `SHIFT_SECONDS` 45 → 55, time build/export + `adb install -r`
++ launch, and screenshot the result — the timer must start at 55 — then revert and time it again. This is
+**not** a hot-reload measurement; Godot's editor Remote Deploy with script hot-reload and Capacitor's live
+reload would both be faster and remain unmeasured.
+
+| Engine | 45 → 55 | 55 → 45 | Build / export | `install -r` | Launch | Proof on the phone |
+|---|---|---|---|---|---|---|
+| **Godot** 4.7.2 | **24.7 s** | **24.4 s** | export 9.9 / 9.7 s | 11.3 / 11.2 s | 0.8 s | timer 53.0 — started at 55 ✓ |
+| **Unity** 6.3, incremental | **67.7 s** | **60.7 s** | 47.0 / 39.8 s wall (Unity reports 33.2 / 30.6 s) | 17.1 / 17.4 s | 0.8 s | timer 53.2 ✓ |
+| **Capacitor** 8.5.2 | **invalid** | **invalid** | Gradle never ran | 5.7 / 5.5 s | 0.9 s | timer 43.1 — **the old build**; the edit never reached the phone |
+
+**The Capacitor run was a harness bug, caught only by the proof screenshot.** `cmd //c "gradlew.bat
+assembleDebug -q"` did not find the Gradle wrapper (*"gradlew.bat no se reconoce"*), so "Gradle" took 0.1 s,
+the stale APK was installed, and the script reported a 13.4 s total that meant nothing. Without the
+screenshot it would have been recorded as a Capacitor win. The script now calls Gradle through PowerShell and
+checks that each APK was actually rewritten, marking the run INVALID otherwise; Capacitor is being re-run.
+
+What the valid numbers say:
+
+- **Godot's loop is ~25 s, and nearly half of it is `install -r`** (11 s for a 27 MB APK); export is ~10 s.
+- **Unity's loop is ~61–68 s.** The incremental build alone is 40–47 s, and install takes 17 s for an APK of
+  almost the same size as Godot's.
+- Launch is under a second everywhere.
+- The fps / frame-max readouts in these proof screenshots were taken 2 s after launch and show start-up
+  hitches (Godot 150 ms, Unity 31.8 ms), not steady-state pacing — do not read them as performance.
+
 **What this says about the productivity axis.** Correction counts alone flatter Unity here.
 Godot's `draw_colored_polygon` and Phaser's `fillPoints` triangulate internally; UGUI made
 Claude write a triangulator, and it was wrong in a way no compiler could catch. The clock bug is
