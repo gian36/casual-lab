@@ -22,11 +22,14 @@ Write-Host "editor: $($editor.FullName)" -ForegroundColor Cyan
 $log = Join-Path $spike "unity_build.log"
 $sw = [System.Diagnostics.Stopwatch]::StartNew()
 
-& $editor.FullName -quit -batchmode -nographics `
-    -projectPath $project `
-    -executeMethod SpikeBuild.BuildAndroid `
-    -logFile $log
-$exit = $LASTEXITCODE
+# Unity.exe is a GUI-subsystem program: the & call operator returns immediately without
+# waiting, which previously produced a 0.0 s "result" read from a stale log. Start-Process
+# -Wait blocks until the editor exits and gives the real exit code.
+if (Test-Path $log) { Remove-Item $log -Force }
+$argList = @("-quit", "-batchmode", "-nographics", "-projectPath", "`"$project`"",
+             "-executeMethod", "SpikeBuild.BuildAndroid", "-logFile", "`"$log`"")
+$proc = Start-Process -FilePath $editor.FullName -ArgumentList $argList -Wait -PassThru -NoNewWindow
+$exit = $proc.ExitCode
 $sw.Stop()
 
 Write-Host "`n=== compile errors and warnings ===" -ForegroundColor Cyan

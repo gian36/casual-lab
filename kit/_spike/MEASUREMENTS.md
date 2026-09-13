@@ -245,8 +245,29 @@ Written while the editor downloaded, so it is ready for the licensed window:
   portrait, min SDK 24 / target 36, and builds the APK, so the licensed window is one
   command rather than an editor session.
 
-**Not yet compiled.** No correction count can be claimed for Unity until it builds, and
-none is claimed. Everything above is code written against the API, not code proven.
+### Gian's attended steps (2026-09-13)
+
+Gian created a Unity account, signed in to Hub and activated **Personal**. With him at the
+machine, the Android module install then completed in **3.7 min with no UAC prompt at all**
+(the editor path is user-writable). So the real cost of the two gates was one account
+creation, one sign-in, one licence click.
+
+The licence path was shaky but held: the batch-mode editor logged
+`Code 10 while verifying Licensing Client signature ... LicensingClient has failed validation; ignoring`
+and `Access token is unavailable`, almost certainly because Hub is the sandboxed MSIX build
+and its licensing client lives under `WindowsApps`. Compilation proceeded regardless.
+
+### Unity build attempts
+
+| # | What happened | Cost |
+|---|---|---|
+| 0 | `build_unity.ps1` failed before reaching Unity: *Missing string terminator*. **My script, not Unity:** Windows PowerShell 5.1 reads BOM-less UTF-8 as ANSI, so an em dash's byte `0x94` became cp1252's closing double quote. `device_window.ps1` had the same defect and would have died mid phone session. Both made ASCII-only and checked with the real parser. Not counted against Unity. | 1 fix, 2 files |
+| 1 | **Correction 5 — Unity's first.** 30 × `CS0246`/`CS0234`: `UnityEngine.UI` and `UnityEngine.EventSystems` not found. **One root cause:** since 2019 UGUI is a *package* (`com.unity.ugui`), not engine code. The hand-written project had no `Packages/manifest.json`, so Unity generated one with the built-in modules only — including `com.unity.modules.ui`, which sounds like the right thing and is not. Script compilation took 12.0 s to report it. | pending rebuild |
+
+**Error-message quality:** accurate but noisy — thirty lines that all say the same thing, none
+of which names the missing package. Compare Godot's single precise line and `tsc`'s
+"Did you mean 'POINT'?". The fix is obvious *if you already know* UGUI moved to a package;
+the message does not tell you.
 
 ## Still to measure
 
