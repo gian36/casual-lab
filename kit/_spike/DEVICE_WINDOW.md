@@ -33,7 +33,7 @@ Without it, Windows attaches the phone's ADB interface to a generic WinUSB drive
 Then, in a terminal here:
 
 ```bash
-powershell -ExecutionPolicy Bypass -File C:Devgabellacasual-labkit_spikedevice_window.ps1
+powershell -ExecutionPolicy Bypass -File C:\Dev\gabella\casual-lab\kit\_spike\device_window.ps1
 ```
 
 Use the full path: it works from any folder the terminal happens to be open in.

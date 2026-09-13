@@ -462,7 +462,7 @@ phone, and three of them Claude's.
 
 | # | Problem | Evidence | Whose | Status |
 |---|---|---|---|---|
-| 1 | Documented command used a **relative path**; Gian's terminal was in `C:WindowsSystem32WindowsPowerShell1.0` | *"El argumento 'kit/_spike/device_window.ps1' para el parámetro -File no existe"* | Claude (doc) | **fixed**, `948ee06` — full path + `-ExecutionPolicy Bypass` |
+| 1 | Documented command used a **relative path**; Gian's terminal was in `C:\Windows\System32\WindowsPowerShell\v1.0` | *"El argumento 'kit/_spike/device_window.ps1' para el parámetro -File no existe"* | Claude (doc) | **fixed**, `948ee06` — full path + `-ExecutionPolicy Bypass` |
 | 2 | **No ADB driver on Windows.** `adb devices` listed nothing, not even `unauthorized` | Phone enumerated fine (`VID_04E8&PID_6860`, MTP, COM3). The ADB interface **MI_03** (`Class_ff&SubClass_42&Prot_01`) was bound to Microsoft's generic **`winusb.inf`** via `MS_COMP_WINUSB`, with **no `DeviceInterfaceGUIDs`** and the ADB interface GUID `{F72FE0D4-CBCB-407D-8814-9ED673D0DD6B}` **not registered**. Both adb backends (default and `ADB_LIBUSB=1`) saw nothing | Windows setup | **needs Gian**: Samsung Android USB Driver for Windows **v1.9.5.0 (35.5 MB, 2026-05-06)**, from `developer.samsung.com/android-usb-driver` — installing a system driver is his to do |
 | 3 | **Capacitor live-reload flags were wrong.** The script called `cap run android --livereload --external` | Capacitor CLI 8.5.2's own `run --help`: the flags are `-l/--live-reload`, `--host`, `--port`, `--forwardPorts <port:port>` (runs `adb reverse`). `--external` is an Ionic CLI flag, not a Capacitor one | Claude (script) | **fixed** — flags now `-l --host localhost --port 5173 --forwardPorts 5173:5173 --target <serial>`, confirmed in the CLI source (see row 5) |
 | 4 | **The network would have broken LAN live reload anyway.** PC on Ethernet `10.0.0.250`, network **`VEGuest`**, Windows profile **Public** | Guest networks commonly isolate clients from each other, and the Public profile blocks inbound connections | environment | avoided by design: live reload goes over the USB cable via `adb reverse` instead of the LAN |
@@ -502,6 +502,54 @@ script's launcher resolution is sound.
 afterwards does not rebuild that APK, so the cold-start step would have installed it and timed a
 WebView pointed at a stopped dev server. The script now rebuilds the Capacitor APK from a clean
 production bundle between live reload and cold start, and warns if a server URL is still packaged.
+
+### The first real run failed: the Android SDK was invisible outside Claude's processes
+
+Gian ran `device_window.ps1` twice — once in a standalone PowerShell, once in the Claude app's
+Terminal panel — and both died on the first adb call:
+`El término 'C:\Users\gianv\AppData\Local\Android\Sdk\platform-tools\adb.exe' no se reconoce`
+(`CommandNotFoundException`). The same line ran fine in every Claude tool process.
+
+Two theories were tested and **falsified** before the cause was found:
+
+| Theory | Test | Result |
+|---|---|---|
+| Administrator window (the first shell opened in `C:\Windows\System32`) | the Terminal panel is a normal shell in the project folder, and it failed identically | **false** |
+| `PATHEXT` missing `.EXE` in Gian's shells | registry `PATHEXT` (Machine) includes `.EXE`, no User override; `& $adb version` succeeds under it; removing `.EXE` gives a *different* error (`RuntimeException`); no PowerShell profile scripts exist | **false** |
+| Permissions | `adb.exe` inherits exactly the ACL of `AppData\Local`; no mark-of-the-web | not the cause |
+
+**Actual cause — MSIX file-system redirection.** The SDK physically lived at
+`%LOCALAPPDATA%\Packages\Claude_pzs8sxrjxfjjc\LocalCache\Local\Android\Sdk`. Claude's tool
+processes run as children of `Claude.exe` from `WindowsApps` (`Claude_1.52386.3.0`); when they
+created the *new* folder `AppData\Local\Android`, Windows redirected it into the Claude package's
+private `LocalCache`. Claude's processes see that merged view at the normal path; Gian's shells
+see the real folder, where `Android` does not exist. Every existence check Claude ran from its own
+processes therefore reported `True` — including the ones used to verify the fix path.
+
+Why only the SDK: the redirect applies to **AppData folders that did not already exist**. Godot's
+`Roaming\Godot` and `Local\Microsoft\WinGet` pre-existed, so the export templates, editor settings
+and the Godot install are real. Everything outside AppData — the repo, the JDKs in
+`C:\Program Files`, `C:\Users\gianv\Unity`, `~\.android\debug.keystore` — was never affected.
+Unity's editor cache (`Local\Unity`, 81 MB) was also redirected but is not needed by Gian's tools.
+(The Unity Hub behaviour seen earlier is the same mechanism, applied to Hub's own package.)
+
+**Fix:** copied the SDK (550 MB, 11,814 files, sizes verified) to **`C:\Android\Sdk`**, outside
+AppData; repointed `device_window.ps1` (now prefers `C:\Android\Sdk`), `build_unity.ps1`'s
+build-tools path, and Godot's `export/android/android_sdk_path` (written to the real
+`editor_settings-4.7.tres`, confirmed not redirected); restarted the adb server from the new copy —
+`R5CX21TWDZN device`, launcher resolution working.
+
+**A second, smaller trap found while writing this up:** in Claude's heredoc-written JavaScript,
+`\` collapsed to `\`, so backslashes vanished from JS string literals. The first version of this
+very section lost every backslash in its Windows paths, and one script patch silently matched
+nothing. Text containing Windows paths is now written as plain data files, never as JS literals.
+
+**For the kit — this is the most important environment finding of the spike.** Anything Claude
+installs from inside the Claude desktop app into a *new* AppData folder exists only for Claude.
+The build works, every check passes, and the founder's own tools cannot see it. Kit setup must
+install toolchains to explicit paths outside AppData, and verification must be run from a shell the
+founder actually uses, not only from Claude's processes. Proposed as an `[OPEN]` for the line's
+machine-setup doctrine.
 
 **What this says about the productivity axis.** Correction counts alone flatter Unity here.
 Godot's `draw_colored_polygon` and Phaser's `fillPoints` triangulate internally; UGUI made
