@@ -716,6 +716,16 @@ What the valid numbers say:
 - The fps / frame-max readouts in these proof screenshots were taken 2 s after launch and show start-up
   hitches (Godot 150 ms, Unity 31.8 ms), not steady-state pacing — do not read them as performance.
 
+**Capacitor's loop remains unmeasured.** The re-run with the fixed Gradle call (15:45) hung inside Gradle:
+the Gradle JVM started and produced nothing for ten minutes, before any install, so it never touched the
+phone. Gian needed the phone back, so the run was stopped and its 45 → 55 test edit reverted. For
+reference only, the desktop edit → APK time measured on 2026-09-12 was **16.4 s** (`vite build` 0.5 s +
+`cap sync` + Gradle), before any install. Capacitor's live reload, which is the loop that would actually
+distinguish it, was never measured either.
+
+**Completion sound:** Gian heard it "on some engines" and is not sure which one stayed silent. Recorded as
+unknown.
+
 **What this says about the productivity axis.** Correction counts alone flatter Unity here.
 Godot's `draw_colored_polygon` and Phaser's `fillPoints` triangulate internally; UGUI made
 Claude write a triangulator, and it was wrong in a way no compiler could catch. The clock bug is
