@@ -78,7 +78,8 @@ Verified against Unity's own release API (`services.api.unity.com/unity/editor/r
 | | Unity also has its own first-party ads/mediation stack (Unity Ads / LevelPlay). Not evaluated: the line's model is AdMob. | scope note |
 | **Consent** | **First-party UMP, in the same package:** `GoogleMobileAds.Ump.Android.dll`, `GoogleMobileAds.Ump.Unity.dll`, `GoogleUmpDependencies.xml`, plus an editor `ConsentForm` prefab. | repo tree listing |
 | **IAP** | `com.unity.purchasing` **5.0.4, 2025-12-03** — first-party Unity. **Google Play Billing Library 8.0.0** (up from 7.1.1 in 5.0.0). Requires Unity 2021.3+; iOS 15+ after the StoreKit 2 move. | Unity package changelog |
-| | **Note the reversal:** Unity's first-party IAP sits on **Billing 8.0.0** — compliant today, but that version's own sunset is **2027-08-31**. Godot's community plugin is on **9.1.0**, good to 2028. First-party did not mean fresher. | cross-read |
+| | **CORRECTED 2026-09-13, from the installed package rather than docs:** what Unity 6.3 LTS actually resolved into a project was **`com.unity.purchasing` 4.15.1**, whose package source declares `com.android.billingclient:billing:8.3.0` (changelog: *"Billing Library updated to 8.3.0 (was previously 8.0.0)"*). So Unity's IAP path as installed is on **Billing 8.3.0** — compliant, and newer than the 8.0.0 the 5.0.4 changelog shows. It also bundles `AmazonAppStore.aar`. | `Library/PackageCache/com.unity.purchasing@…/` package.json, sources, CHANGELOG |
+| | **Note the reversal:** Unity's first-party IAP sits on **Billing 8.x** (8.0.0 per the 5.0.4 changelog; **8.3.0** in the 4.15.1 package Unity actually installed) — compliant today, but v8's own sunset is **2027-08-31**. Godot's community plugin is on **9.1.0**, good to 2028. First-party did not mean fresher. | cross-read, corrected 2026-09-13 |
 | **Analytics** | Strongest of the three. `firebase/firebase-unity-sdk` **v13.16.0, 2026-08-27** — first-party Google, roughly three-week cadence (13.14.0 2026-07-17, 13.15.0 2026-08-06). Unity Gaming Services analytics also exists first-party. | GitHub API |
 | **Store compliance** | Unity 6 manual (`6000.2` docs, fetched 2026-09-12): *"You can now target Android API levels 35 and 36"*; minimum Android 6.0 / API 23. **16 KB pages supported**, with the documented caveat that *"Unity applications built for devices with 4 KB memory page size might not work on devices with 16 KB memory page size"* — a build-configuration matter, not automatic. | Unity manual |
 | **Longevity** | **Unity Personal is free below $200,000 USD total annual revenue *and funding*** — doubled from $100k — and the **Runtime Fee was cancelled outright**, both announced **2024-09-12** on Unity's own blog. The *Made with Unity* splash became **optional** for Unity Personal on Unity 6. Unity Pro is required above $200k; Enterprise above $25M. | unity.com blog 2024-09-12 (primary) |
@@ -149,7 +150,7 @@ on-device feel** — plus, for Capacitor, whether a WebView can carry a 60 fps d
 | Candidate | Billing Library | Clears the v8 bar (since 2026-08-31)? | Headroom |
 |---|---|---|---|
 | Godot (`godot-google-play-billing` 3.3.0) | **9.1.0** | yes | to 2028-08-31 |
-| Unity (`com.unity.purchasing` 5.0.4) | 8.0.0 | yes | to 2027-08-31 |
+| Unity (`com.unity.purchasing` 4.15.1, as installed by 6.3 LTS; 5.0.4 changelog says 8.0.0) | **8.3.0** | yes | to 2027-08-31 |
 | Capacitor (RevenueCat 13.5.1) | 8.3.0 | yes | to 2027-08-31 |
 
 The community plugin is the one with the most runway. That is worth saying plainly,

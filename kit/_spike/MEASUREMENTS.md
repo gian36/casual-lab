@@ -272,14 +272,15 @@ and its licensing client lives under `WindowsApps`. Compilation proceeded regard
 | Measure | Unity 6.3 LTS | Godot 4.7.2 | Capacitor 8.5.2 |
 |---|---|---|---|
 | Corrections | **5** — 1 package manifest + 4 slice defects that compiled clean (#6–#9) | 1 | 3 + 1 toolchain |
-| Debug APK, arm64-v8a | **34.90 MB** (Development build, IL2CPP) | 26.96 MB | 4.34 MB |
-| Cold build | **312.5 s** Unity-reported; 6 min 19 s wall including first project import | 10.4 s | ~2 min incl. downloads; 55 s warm |
+| Debug APK, arm64-v8a | **27.78 MB** like-for-like, clean build (34.98 MB with the 11 packages Unity added on its own — see below) | 26.96 MB | 4.34 MB |
+| Cold build | **312.5 s** first build incl. project import (6 min 19 s wall); clean rebuilds **204.2 s** with the extra packages, **150.8 s** (168.2 s wall) like-for-like | 10.4 s | ~2 min incl. downloads; 55 s warm |
 | of which Gradle | 101.1 s | n/a (prebuilt template) | most of it |
 | Edit → APK | **71.6 s** wall (Unity reports 44.7 s build), one-constant change | 10.1 s | 16.4 s |
 | `targetSdkVersion` | **36** (enum resolved, no fallback) | 36 | 36 |
 | `minSdkVersion` | **25** — the script set 24; Unity raised it **silently**, no log warning | 24 | 24 |
 | Signing | v2 | v2 + v3 | v2 |
-| Native `.so` | **6** — `libil2cpp` 45.36 MB, `libunity` 32.36 MB, `libc++_shared` 1.23, `libgame` 0.24, `libswappywrapper` 0.22, `libmain` 0.01 | 2 | 0 |
+| Permissions | like-for-like: `INTERNET` + AndroidX receiver permission; with the extra packages also **`com.android.vending.BILLING`** and `ACCESS_NETWORK_STATE` | **none** | `INTERNET` + AndroidX receiver permission |
+| Native `.so` | **6** — like-for-like: `libil2cpp` 31.20 MB, `libunity` 30.68 MB, `libc++_shared` 1.23, `libgame` 0.24, `libswappywrapper` 0.22, `libmain` 0.01 (with the extra packages: 45.37 / 32.55) | 2 | 0 |
 | 16 KB page compliance | **PASS, verified empirically** — `p_align = 16384` on all six | PASS, empirical | n/a, no native code |
 | JDK | **bundled OpenJDK** — no system JDK needed at all | 17 | 21 |
 | Build toolchain | bundled Gradle 9.1.0 / AGP 9.0.0 | none needed for prebuilt template | AGP 8.13.0 / Gradle 8.14.3 |
@@ -315,7 +316,7 @@ and Gradle project exported · 13:25:10 Gradle starts · 13:26:54 exit 0.
 **Fairness notes.** All three are debug/development arm64 builds, so the sizes compare like
 for like, but none is release-optimised: Unity's IL2CPP with managed stripping, Godot's
 release template (25.21 MB unsigned) and a minified Capacitor bundle would each shrink.
-Unity's six native libraries total ~79 MB uncompressed. Its bundled toolchain is a genuine
+Unity's six native libraries total ~64 MB uncompressed like-for-like (~80 MB with the extra packages). Its bundled toolchain is a genuine
 advantage — no JDK juggling — bought with a 7.75 GB install.
 
 **Licence path held, but noisily:** the log still carries `LicensingClient has failed
@@ -394,6 +395,62 @@ Godot's cold start, logcat scan and persistence check, and Unity's cold start, w
 **failed silently in the attended window**. `device_window.ps1` now resolves each launcher
 on the phone itself with `cmd package resolve-activity -c android.intent.category.LAUNCHER`,
 so no activity name is hard-coded anywhere.
+
+### Unity added an IAP SDK and an analytics SDK on its own — and they shipped
+
+Spotted in IL2CPP's assembly list during a clean rebuild (`Unity.Services.Analytics`,
+`Unity.Services.Core.*`, `Newtonsoft.Json` — none used by the slice), then traced with
+Unity's own `Logs/Packages-Update.log`:
+
+| Time | Update mode | What Unity added |
+|---|---|---|
+| 13:18:37 | `resetToDefaultDependencies` — first open, no manifest | built-in modules + `com.unity.multiplayer.center` |
+| 13:20:37 | `updateDependencies` — **the first open after Claude hand-edited the manifest to add uGUI** | 11 packages: **`com.unity.purchasing@4.15.1`**, **`com.unity.analytics@3.8.2`**, `collab-proxy`, `ide.rider`, `ide.visualstudio`, `test-framework`, `timeline`, `ai.navigation`, `xr.legacyinputhelpers`, `2d.sprite`, `2d.tilemap` |
+
+No prompt, and nothing in the build output. **Claude committed that manifest in `187f3a5`
+without noticing** — a miss worth owning, and exactly the kind a low-attention line would not
+catch in review.
+
+What those packages put into the store build (clean, 34.98 MB):
+
+- permissions **`com.android.vending.BILLING`**, `INTERNET`, `ACCESS_NETWORK_STATE`
+- Play Billing client code: **508** `com/android/billingclient` references in `classes.dex`,
+  41 `com/unity/purchasing`, and a bundled `AmazonAppStore.aar`
+- IL2CPP-compiled `UnityEngine.Purchasing`, `Unity.Services.Analytics`, `Unity.Services.Core`,
+  `Newtonsoft.Json`
+
+**Compliance checked, not assumed:** `com.unity.purchasing` 4.15.1 declares
+`com.android.billingclient:billing:8.3.0` (changelog: *Billing Library updated to 8.3.0*), which
+clears Play's v8 bar. The worry that this APK would be store-rejectable was checked and
+**falsified**.
+
+**Like-for-like rebuild** after removing the 12 non-slice packages (kept uGUI and every
+built-in module):
+
+| | With the extra packages | Like-for-like |
+|---|---|---|
+| APK | 34.98 MB | **27.78 MB** (−7.20 MB) |
+| Zip entries | 465 | 403 |
+| Clean build | 204.2 s | 150.8 s (168.2 s wall) |
+| `BILLING` permission | yes | **gone** |
+| billing / purchasing / Amazon refs in dex | 508 / 41 / present | **0 / 0 / 0** |
+| `Unity.Services.*`, `Newtonsoft.Json` in IL2CPP metadata | present | **0** |
+| Did Unity re-add packages? | — | **no** — `Packages-Update.log` untouched, manifest still 35 deps |
+
+Residue, **not traced**: IL2CPP metadata still holds 16 `UnityEngine.Purchasing` and 17
+`UnityEngine.Analytics` strings. Every built-in module (including
+`com.unity.modules.unityanalytics`) was kept, which is the likely source, but that is not
+verified. No billing code ships.
+
+**Corrected like-for-like sizes: Unity 27.78 MB · Godot 26.96 MB · Capacitor 4.34 MB.** Unity and
+Godot are effectively level; the unrequested packages had made Unity look ~30% heavier than it is.
+
+**For the line:** a Unity project's package set can change underneath it on open, and what it
+adds ships code, SDKs and permissions into the store build. A line that must declare Play Data
+safety and gate analytics behind UMP consent cannot have an analytics SDK or a `BILLING`
+permission nobody chose. Any Unity-based kit would need a pinned manifest and a check on the
+manifest and the APK's permissions at every build. Godot and Capacitor showed no equivalent
+behaviour in this spike.
 
 **What this says about the productivity axis.** Correction counts alone flatter Unity here.
 Godot's `draw_colored_polygon` and Phaser's `fillPoints` triangulate internally; UGUI made
