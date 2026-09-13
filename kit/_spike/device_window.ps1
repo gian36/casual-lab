@@ -112,16 +112,54 @@ function Test-Persistence($package, $label) {
 # This is the number most tied to the line's low-attention premise, and the one the
 # desk phase could not estimate. It goes first in case the window is short.
 
-Say "1. Capacitor live reload"
-Write-Host "Starting 'cap run android --livereload --external'." -ForegroundColor Yellow
-Write-Host "When it is running: edit SHIFT_SECONDS in src/main.ts, save, and time how long" -ForegroundColor Yellow
-Write-Host "until the phone shows the new value. That is the loop." -ForegroundColor Yellow
-Write-Host "Ctrl+C when done, then this script continues." -ForegroundColor Yellow
-Push-Location "$spike\capacitor"
-$env:JAVA_HOME = "C:\Program Files\Eclipse Adoptium\jdk-21.0.12.101-hotspot"
-$env:ANDROID_HOME = $sdk
-try { & npx cap run android --livereload --external } catch { Write-Host "livereload ended: $_" }
-Pop-Location
+Say "1. Capacitor live reload (over the USB cable)"
+# Checked against Capacitor CLI 8.5.2's own help and source (2026-09-13):
+#  - the flags are -l/--live-reload, --host, --port, --forwardPorts <port:port>; the earlier
+#    --livereload / --external were wrong (--external is an Ionic CLI flag).
+#  - --forwardPorts is handed to native-run as --forward, which sets up the USB port
+#    forwarding, so the phone reaches the PC dev server over the cable and not over the LAN
+#    (this PC is on a Public, guest-named network where devices may be isolated).
+#  - cap run does NOT start a dev server, so Vite is started here.
+#  - Ctrl+C is what makes Capacitor restore its config and manifest, but Ctrl+C would also
+#    stop this whole script, so live reload runs in its own window.
+$serial = (& $adb get-serialno).Trim()
+Write-Host "  target device: $serial" -ForegroundColor DarkGray
+
+$capDir = Join-Path $spike "capacitor"
+$viteProc = Start-Process -FilePath "npx.cmd" -ArgumentList @("vite", "--host", "127.0.0.1", "--port", "5173", "--strictPort") -WorkingDirectory $capDir -WindowStyle Minimized -PassThru
+$ready = $false
+for ($i = 0; $i -lt 60; $i++) {
+    try {
+        $probe = Invoke-WebRequest -Uri "http://127.0.0.1:5173/" -UseBasicParsing -TimeoutSec 2
+        if ($probe.StatusCode -eq 200) { $ready = $true; break }
+    } catch { }
+    Start-Sleep -Milliseconds 500
+}
+if (-not $ready) {
+    Write-Host "  Vite dev server did not answer on 127.0.0.1:5173 within 30 s - skipping live reload" -ForegroundColor Red
+} else {
+    Write-Host "  Vite dev server up on http://127.0.0.1:5173" -ForegroundColor DarkGray
+    $jdk21 = "C:\Program Files\Eclipse Adoptium\jdk-21.0.12.101-hotspot"
+    $capCmd = "`$env:JAVA_HOME = '$jdk21'; `$env:ANDROID_HOME = '$sdk'; Set-Location '$capDir'; npx cap run android -l --host localhost --port 5173 --forwardPorts 5173:5173 --target $serial"
+    Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoExit", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command", $capCmd) | Out-Null
+    Write-Host "  A second window is building and deploying the app with live reload." -ForegroundColor Yellow
+    Write-Host "  When the app is on the phone: edit SHIFT_SECONDS in kit\_spike\capacitor\src\main.ts," -ForegroundColor Yellow
+    Write-Host "  save, and time how long until the phone shows the new value. That is the loop." -ForegroundColor Yellow
+    Write-Host "  Then press Ctrl+C in THAT window (so Capacitor restores its config), and come back here." -ForegroundColor Yellow
+    Read-Host "  press Enter here once you have your number and stopped live reload"
+}
+
+Get-NetTCPConnection -LocalPort 5173 -State Listen -ErrorAction SilentlyContinue | ForEach-Object { Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue }
+if ($viteProc -and -not $viteProc.HasExited) { Stop-Process -Id $viteProc.Id -Force -ErrorAction SilentlyContinue }
+Write-Host "  Vite dev server stopped" -ForegroundColor DarkGray
+
+$capCfg = Join-Path $capDir "android\app\src\main\assets\capacitor.config.json"
+if ((Test-Path $capCfg) -and ((Get-Content $capCfg -Raw) -match '"url"')) {
+    Write-Host "  live-reload URL is still in the native config (window closed without Ctrl+C?) - restoring" -ForegroundColor Yellow
+    Push-Location $capDir
+    & npx cap sync android
+    Pop-Location
+}
 
 Say "2. Godot one-click deploy / remote debug"
 Write-Host "Godot's equivalent is the editor's Remote Deploy button with script hot-reload." -ForegroundColor Yellow

@@ -452,6 +452,34 @@ permission nobody chose. Any Unity-based kit would need a pinned manifest and a 
 manifest and the APK's permissions at every build. Godot and Capacitor showed no equivalent
 behaviour in this spike.
 
+---
+
+# Device window — pre-flight (2026-09-13, phone at the desk)
+
+Gian connected the **Galaxy S24 Ultra** (USB serial `R5CX21TWDZN`) with Developer options and
+USB debugging on. Before any measurement, four things were wrong or missing — none on the
+phone, and three of them Claude's.
+
+| # | Problem | Evidence | Whose | Status |
+|---|---|---|---|---|
+| 1 | Documented command used a **relative path**; Gian's terminal was in `C:WindowsSystem32WindowsPowerShell1.0` | *"El argumento 'kit/_spike/device_window.ps1' para el parámetro -File no existe"* | Claude (doc) | **fixed**, `948ee06` — full path + `-ExecutionPolicy Bypass` |
+| 2 | **No ADB driver on Windows.** `adb devices` listed nothing, not even `unauthorized` | Phone enumerated fine (`VID_04E8&PID_6860`, MTP, COM3). The ADB interface **MI_03** (`Class_ff&SubClass_42&Prot_01`) was bound to Microsoft's generic **`winusb.inf`** via `MS_COMP_WINUSB`, with **no `DeviceInterfaceGUIDs`** and the ADB interface GUID `{F72FE0D4-CBCB-407D-8814-9ED673D0DD6B}` **not registered**. Both adb backends (default and `ADB_LIBUSB=1`) saw nothing | Windows setup | **needs Gian**: Samsung Android USB Driver for Windows **v1.9.5.0 (35.5 MB, 2026-05-06)**, from `developer.samsung.com/android-usb-driver` — installing a system driver is his to do |
+| 3 | **Capacitor live-reload flags were wrong.** The script called `cap run android --livereload --external` | Capacitor CLI 8.5.2's own `run --help`: the flags are `-l/--live-reload`, `--host`, `--port`, `--forwardPorts <port:port>` (runs `adb reverse`). `--external` is an Ionic CLI flag, not a Capacitor one | Claude (script) | **fixed** — flags now `-l --host localhost --port 5173 --forwardPorts 5173:5173 --target <serial>`, confirmed in the CLI source (see row 5) |
+| 4 | **The network would have broken LAN live reload anyway.** PC on Ethernet `10.0.0.250`, network **`VEGuest`**, Windows profile **Public** | Guest networks commonly isolate clients from each other, and the Public profile blocks inbound connections | environment | avoided by design: live reload goes over the USB cable via `adb reverse` instead of the LAN |
+| 5 | **Ctrl+C would have killed the whole script.** Step 1 told Gian to press Ctrl+C to end live reload "and this script continues" | Capacitor restores its config and manifest on SIGINT (`tasks/run.js`), so Ctrl+C is required, but in PowerShell Ctrl+C also stops the running script: steps 2–6 would never have run. The source also showed `cap run` never starts a dev server, `-l` writes `android:usesCleartextTraffic="true"`, and `--forwardPorts` is passed to native-run as `--forward` | Claude (script) | **fixed** — the script starts Vite itself, runs `cap run` in a **separate window** where Ctrl+C is safe, stops Vite by its listening port, and restores the native config with `cap sync` if the window was closed without Ctrl+C |
+
+**Why this matters beyond the spike.** Two of the three candidates' device loops depend on adb,
+and on this Windows machine adb did not work out of the box for a Samsung phone. That is a
+one-time driver install — but it is a human-gated step that falls on *every* candidate equally,
+like the Android SDK licence, and it belongs in the kit's machine-setup notes, not in any
+engine's scorecard.
+
+**Pre-flight checks have now caught four device-session bugs before Gian's time was spent on
+them:** Unity's and Godot's launch activity names, the wrong Capacitor live-reload flags, and
+Ctrl+C ending the whole script. One more reached Gian (the relative path). Every one was in a
+Claude-written script and every one was found by checking the command against the actual
+tool — its help, its source, or the built APK — rather than recalling it.
+
 **What this says about the productivity axis.** Correction counts alone flatter Unity here.
 Godot's `draw_colored_polygon` and Phaser's `fillPoints` triangulate internally; UGUI made
 Claude write a triangulator, and it was wrong in a way no compiler could catch. The clock bug is

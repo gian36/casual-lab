@@ -18,6 +18,11 @@ module then installed without a UAC prompt, and the Unity slice builds with
 
 ## Your part — about three minutes
 
+**First, once per PC:** install the **Samsung Android USB Driver for Windows** (v1.9.5.0,
+35.5 MB, 2026-05-06) from `developer.samsung.com/android-usb-driver`, accepting its UAC prompt.
+Without it, Windows attaches the phone's ADB interface to a generic WinUSB driver and
+`adb devices` shows nothing at all — not even `unauthorized`. Found on this PC 2026-09-13.
+
 1. **Settings → About phone → Software information**, tap **Build number** seven times.
 2. **Settings → Developer options** → turn on **USB debugging**.
 3. Plug the phone into this machine with a **data** cable (a charge-only cable will show
@@ -39,7 +44,7 @@ Add `-SkipUnity` if the Unity build has not happened yet.
 
 | # | Step | Attended? |
 |---|---|---|
-| 1 | **Capacitor live reload** — `cap run android --livereload --external`, then you edit one constant and time how long until the phone shows it | yes, you time it |
+| 1 | **Capacitor live reload, over the USB cable** — the script starts Vite and opens a **second window** running `cap run android -l --host localhost --port 5173 --forwardPorts 5173:5173`; you edit one constant, time how long until the phone shows it, then press **Ctrl+C in that second window** and Enter in the first | yes, you time it |
 | 2 | **Godot remote deploy** — same edit, same timing, via the editor's Remote Deploy with script hot-reload | yes, you time it |
 | 3 | **Cold start** — installs each APK, then 5 × `force-stop` + `am start -W`, reporting median/min/max `TotalTime` | no |
 | 4 | **Logcat scan** — launches and collects any error-level output | no |
@@ -68,5 +73,10 @@ That judgement is yours. It is the one measurement in CL-01 that Claude cannot t
 - An install fails with **`INSTALL_FAILED_UPDATE_INCOMPATIBLE`** → a previous build with the
   same package name and a different signature is on the phone; the script uninstalls first,
   but if it persists, remove the app by hand.
-- The Capacitor live-reload step needs the phone and this machine on the **same network**,
-  because `--external` serves the bundle over LAN.
+- Live reload goes over the **USB cable** (`adb reverse`), not the network, so the guest
+  network this PC is on does not matter.
+- Stop live reload with **Ctrl+C in its own window**, never in the main one: Ctrl+C in the main
+  window ends the whole script. If the second window is closed some other way, the script
+  notices and restores Capacitor's config with `cap sync`.
+- `adb devices` shows **nothing** even with USB debugging on → the Samsung USB driver is
+  missing (see the top of "Your part").
