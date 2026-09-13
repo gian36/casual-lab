@@ -4,7 +4,7 @@
 # part is three things: enable Developer options, turn on USB debugging, and accept the
 # RSA prompt. See DEVICE_WINDOW.md.
 #
-#   powershell -ExecutionPolicy Bypass -File C:Devgabellacasual-labkit_spikedevice_window.ps1
+#   powershell -ExecutionPolicy Bypass -File C:\Dev\gabella\casual-lab\kit\_spike\device_window.ps1
 #   (add -SkipUnity to leave the Unity APK out)
 
 param(
