@@ -668,6 +668,11 @@ at 16.7 ms. Unity's stress silhouettes render in the wrong place — off to the 
 because the stress layer's `RectTransform` is created with default centre anchors and no size. Cosmetic and
 harness-only, Claude's.
 
+**Correction #11 verified on device (15:37 build, installed with `install -r`):** Unity now reads
+**fps 120, frame max 8.4 ms, drift +0.002 s**, BEST 13 kept across the update. The phone reports a render
+rate of 120. Rebuild: 164.5 s (176.5 s wall, clean), 27.78 MB, targetSdk 36. All three engines now run at
+the display's 120 Hz, so the drag and frame-pacing rows compare like for like.
+
 **All three engines, on device:** drag registers with real touch input, the best score persists across a
 real `force-stop`, and no frame was dropped while dragging at each engine's frame rate.
 
