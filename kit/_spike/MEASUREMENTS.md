@@ -650,6 +650,38 @@ Godot's relaunch screenshot also shows `planes 104` on what should have been a f
   screenshot, 95 in another, 121 during the automated drags — the WebView's frame pacing varied where
   Godot's did not.
 
+### Automated test — Unity (2026-09-13, 15:34–15:35), scaler fix installed
+
+Same script (`device_autotest.sh unity`), after installing the width-matching build with `install -r`.
+
+| | Unity 6.3 LTS |
+|---|---|
+| App data across the update | **kept** — `cl01.best = 8` before and after `install -r` |
+| **Drag works with real touch on device** | **yes** — SERVED 7 with 22.4 s left |
+| fps / frame max / **drag max** | 60 / 16.7 ms / **16.7 ms** — one frame at 60 Hz, no dropped frame, but **capped at 60 by the slice's own `Application.targetFrameRate = 60`** (correction #11; 120 Hz rebuild in progress) |
+| timer drift | −0.002 s |
+| **Stored after `force-stop`** | `PlayerPrefs` `cl01.best` = **13**, both before and after the `force-stop` |
+| BEST on relaunch | **13** |
+
+Incidental: `planes 404` mid-shift (the stress button fired four times in this run) with frame max unchanged
+at 16.7 ms. Unity's stress silhouettes render in the wrong place — off to the right and below the canvas —
+because the stress layer's `RectTransform` is created with default centre anchors and no size. Cosmetic and
+harness-only, Claude's.
+
+**All three engines, on device:** drag registers with real touch input, the best score persists across a
+real `force-stop`, and no frame was dropped while dragging at each engine's frame rate.
+
+### Gian's observations (2026-09-13)
+
+- **Drag feel: "fine"** — no engine singled out.
+- **Stress +100: tried in some runs, "didn't see changes."** Consistent with the measurements — 104 aircraft
+  (Godot, Capacitor) and 404 (Unity) left frame max flat. It is also partly the harness: the stress
+  silhouettes are faint and drawn behind the lanes in Godot and Capacitor, and misplaced in Unity. **This
+  phone's sprite ceiling is above 400 and was not found.**
+- **Completion sound: played "on some engines."** Which engine(s) stayed silent is not yet known.
+- **Godot remote deploy: not tried.** The on-device edit→see loop for Godot, and Capacitor's live reload,
+  remain unmeasured.
+
 **What this says about the productivity axis.** Correction counts alone flatter Unity here.
 Godot's `draw_colored_polygon` and Phaser's `fillPoints` triangulate internally; UGUI made
 Claude write a triangulator, and it was wrong in a way no compiler could catch. The clock bug is

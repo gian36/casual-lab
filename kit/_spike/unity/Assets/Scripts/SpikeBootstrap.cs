@@ -83,7 +83,11 @@ public class SpikeBootstrap : MonoBehaviour
 
     private void Awake()
     {
-        Application.targetFrameRate = 60;
+        // FIXED 2026-09-13 (found on the S24 Ultra): a hard 60 capped Unity at 60 fps / 16.8 ms
+        // frames while Godot and Capacitor ran at 120 on the same 120 Hz display - unfair on the
+        // drag-latency axis. Match the display's refresh rate (60 minimum). Note that on Android
+        // -1 means the platform default of 30, so it is set explicitly.
+        Application.targetFrameRate = Mathf.Max(60, Mathf.RoundToInt((float)Screen.currentResolution.refreshRateRatio.value));
         Screen.orientation = ScreenOrientation.Portrait;
 
         _font = Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
@@ -108,7 +112,10 @@ public class SpikeBootstrap : MonoBehaviour
         var scaler = canvasGo.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(W, H);
-        scaler.matchWidthOrHeight = 1f;  // portrait: match height
+        // FIXED 2026-09-13 (found on the S24 Ultra): matching HEIGHT on a phone taller than 9:16
+        // scaled the UI to 1755 px wide on a 1440 px screen, pushing PUSH, the perf readout and
+        // the lane edges off-screen. A portrait game must match WIDTH; extra height is spare.
+        scaler.matchWidthOrHeight = 0f;
 
         if (FindAnyObjectByType<EventSystem>() == null)
         {
