@@ -79,6 +79,7 @@ public class SpikeBootstrap : MonoBehaviour
     private float _perfWindow;
     private bool _dragging;
     private int _stress;
+    private bool _clockArmed;
 
     private void Awake()
     {
@@ -185,7 +186,7 @@ public class SpikeBootstrap : MonoBehaviour
 
             var body = NewImage("Body", go.transform, 0, 0, slotW, TrayH);
             body.color = ServiceColours[s];
-            NewText("Label", go.transform, 18, TrayH / 2 - 22, slotW, 44, 34, new Color(0.08f, 0.09f, 0.11f));
+            NewText("Label", go.transform, 18, TrayH / 2 - 22, slotW, 44, 34, new Color(0.08f, 0.09f, 0.11f)).text = ServiceNames[s];
 
             var button = go.AddComponent<TrayButton>();
             button.Service = s;
@@ -262,7 +263,10 @@ public class SpikeBootstrap : MonoBehaviour
         _served = 0;
         _running = true;
         _accumulated = 0f;
-        _startedAt = Time.realtimeSinceStartup;
+        // FIXED 2026-09-13: the clock used to start here. The first Update then received an
+        // unscaledDeltaTime covering everything before the first rendered frame (splash
+        // included), and the shift silently lost seconds - the readout showed drift +2.041 s.
+        _clockArmed = false;
         for (int s = 0; s < ServiceNames.Length; s++)
         {
             _available[s] = VehiclePool;
@@ -287,6 +291,13 @@ public class SpikeBootstrap : MonoBehaviour
     private void Update()
     {
         float dt = Time.unscaledDeltaTime;
+        if (!_clockArmed)
+        {
+            // Start the shift on the first rendered frame, and discard that frame's delta.
+            _clockArmed = true;
+            _startedAt = Time.realtimeSinceStartup;
+            dt = 0f;
+        }
         Measure(dt);
         if (!_running) return;
 

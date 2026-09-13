@@ -43,6 +43,10 @@ public class PolygonGraphic : MaskableGraphic
         int n = poly.Length;
         if (n < 3) return;
 
+        // Walk the outline counter-clockwise, which is what the convexity test below
+        // assumes. FIXED 2026-09-13: the first version used the (b.x-a.x)(b.y+a.y)
+        // shoelace form, which is positive for CLOCKWISE polygons, so it walked the
+        // outline backwards, rejected real ears, and drew the aircraft as shards.
         var indices = new List<int>(n);
         if (SignedArea(poly) > 0f)
             for (int i = 0; i < n; i++) indices.Add(i);
@@ -81,26 +85,26 @@ public class PolygonGraphic : MaskableGraphic
         }
     }
 
+    // Standard shoelace: positive for counter-clockwise in y-up space.
     private static float SignedArea(Vector2[] p)
     {
         float sum = 0f;
         for (int i = 0; i < p.Length; i++)
         {
             Vector2 a = p[i], b = p[(i + 1) % p.Length];
-            sum += (b.x - a.x) * (b.y + a.y);
+            sum += a.x * b.y - b.x * a.y;
         }
-        return sum;
+        return sum * 0.5f;
     }
 
     private static float Cross(Vector2 a, Vector2 b) => a.x * b.y - a.y * b.x;
 
+    // Strictly inside a counter-clockwise triangle. FIXED 2026-09-13: the first version
+    // also counted points lying ON an edge as inside, and this outline has collinear
+    // vertices along its fuselage, which blocked valid ears.
     private static bool InTriangle(Vector2 p, Vector2 a, Vector2 b, Vector2 c)
     {
-        float d1 = Cross(b - a, p - a);
-        float d2 = Cross(c - b, p - b);
-        float d3 = Cross(a - c, p - c);
-        bool neg = d1 < 0f || d2 < 0f || d3 < 0f;
-        bool pos = d1 > 0f || d2 > 0f || d3 > 0f;
-        return !(neg && pos);
+        const float eps = 1e-4f;
+        return Cross(b - a, p - a) > eps && Cross(c - b, p - b) > eps && Cross(a - c, p - c) > eps;
     }
 }

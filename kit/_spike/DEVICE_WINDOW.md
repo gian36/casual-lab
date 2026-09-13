@@ -10,24 +10,11 @@ Device: **Samsung Galaxy S24 Ultra**.
 > and none of them will answer the question the brief actually asked. This is raised as a
 > proposed `[OPEN]` for Cowork: *which device is this line's reference target?*
 
-## Before the phone: two Unity gates, ~10 minutes
+## Unity gates: done (2026-09-13)
 
-Unity is downloaded (7.75 GB, cached) but **not installed**. It stopped at a UAC prompt
-that an unattended session cannot answer, and a licence sign-in waits behind it.
-
-1. Open **Unity Hub** (Start menu → Unity Hub) and **sign in**, choosing the free
-   **Personal** licence. Gabella is far below the $200K threshold.
-2. In Hub, install **6000.3.24f1** with the **Android Build Support** module and its child
-   modules. The 7.75 GB is already cached, so this should be quick — **accept the UAC
-   prompt** when it appears.
-3. Then, from a terminal here:
-
-```bash
-powershell -File kit/_spike/build_unity.ps1
-```
-
-That builds the Unity slice's APK in batch mode and reports its size, build time and
-compile errors — the numbers the other two candidates already have.
+Gian created a Unity account, signed in to Hub and activated **Personal**; the Android
+module then installed without a UAC prompt, and the Unity slice builds with
+`build_unity.ps1`. Nothing Unity-specific is left before the phone.
 
 ## Your part — about three minutes
 

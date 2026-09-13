@@ -58,12 +58,28 @@ function Install-Apk($apkPath, $package) {
     return $false
 }
 
-function Measure-ColdStart($package, $activity, $runs) {
+# Launcher components are resolved ON THE DEVICE rather than hard-coded. A pre-flight
+# check against the built APKs (2026-09-13) found two of three hard-coded names wrong:
+#   Unity 6 launches com.unity3d.player.UnityPlayerGameActivity, not UnityPlayerActivity.
+#   Godot 4.7 launches through an activity-alias, com.godot.game.GodotAppLauncher; the
+#   GodotApp activity itself is exported=false, so adb am start is refused.
+# A wrong name makes am start fail and the measurement silently come back empty.
+function Get-LaunchComponent($package) {
+    $out = & $adb shell cmd package resolve-activity --brief -c android.intent.category.LAUNCHER $package 2>&1
+    $component = ($out | Where-Object { $_ -match "/" } | Select-Object -Last 1)
+    if (-not $component) { Write-Host "no launcher found for $package" -ForegroundColor Red; return $null }
+    return $component.ToString().Trim()
+}
+
+function Measure-ColdStart($package, $runs) {
+    $component = Get-LaunchComponent $package
+    if (-not $component) { return $null }
+    Write-Host "  launching $component" -ForegroundColor DarkGray
     $samples = @()
     for ($i = 0; $i -lt $runs; $i++) {
         & $adb shell am force-stop $package | Out-Null
         Start-Sleep -Milliseconds 900
-        $out = & $adb shell am start -W -n "$package/$activity" 2>&1
+        $out = & $adb shell am start -W -n $component 2>&1
         $line = $out | Select-String "TotalTime:"
         if ($line) { $samples += [int](($line -split ":")[1].Trim()) }
     }
@@ -77,15 +93,17 @@ function Measure-ColdStart($package, $activity, $runs) {
     }
 }
 
-function Test-Persistence($package, $activity, $label) {
+function Test-Persistence($package, $label) {
+    $component = Get-LaunchComponent $package
+    if (-not $component) { return }
     # The point is a real process death, not an activity restart: play, force-stop,
     # relaunch, and see whether the best score came back.
     Write-Host "  $label - play until the shift fails, then press Enter" -ForegroundColor Yellow
-    & $adb shell am start -n "$package/$activity" | Out-Null
+    & $adb shell am start -n $component | Out-Null
     Read-Host "  press Enter once you have seen SHIFT FAILED"
     & $adb shell am force-stop $package | Out-Null
     Start-Sleep -Seconds 2
-    & $adb shell am start -n "$package/$activity" | Out-Null
+    & $adb shell am start -n $component | Out-Null
     Start-Sleep -Seconds 4
     Read-Host "  does the HUD show a non-zero BEST? press Enter after looking"
 }
@@ -117,18 +135,18 @@ Say "3. cold start"
 
 $godotApk = "$spike\godot\build\cl01-spike.apk"
 if (Install-Apk $godotApk "com.gabella.cl01spike") {
-    $results["godot_cold_start_ms"] = Measure-ColdStart "com.gabella.cl01spike" "com.godot.game.GodotApp" $ColdStartRuns
+    $results["godot_cold_start_ms"] = Measure-ColdStart "com.gabella.cl01spike" $ColdStartRuns
 }
 
 $capApk = "$spike\capacitor\android\app\build\outputs\apk\debug\app-debug.apk"
 if (Install-Apk $capApk "com.gabella.cl01spikeweb") {
-    $results["capacitor_cold_start_ms"] = Measure-ColdStart "com.gabella.cl01spikeweb" ".MainActivity" $ColdStartRuns
+    $results["capacitor_cold_start_ms"] = Measure-ColdStart "com.gabella.cl01spikeweb" $ColdStartRuns
 }
 
 if (-not $SkipUnity) {
     $unityApk = "$spike\unity\build\cl01-spike-unity.apk"
     if (Install-Apk $unityApk "com.gabella.cl01spikeunity") {
-        $results["unity_cold_start_ms"] = Measure-ColdStart "com.gabella.cl01spikeunity" "com.unity3d.player.UnityPlayerActivity" $ColdStartRuns
+        $results["unity_cold_start_ms"] = Measure-ColdStart "com.gabella.cl01spikeunity" $ColdStartRuns
     }
 }
 
@@ -136,15 +154,17 @@ if (-not $SkipUnity) {
 
 Say "4. logcat scan for runtime errors"
 & $adb logcat -c
-& $adb shell am start -n "com.gabella.cl01spike/com.godot.game.GodotApp" | Out-Null
+$godotComponent = Get-LaunchComponent "com.gabella.cl01spike"
+if ($godotComponent) { & $adb shell am start -n $godotComponent | Out-Null }
 Start-Sleep -Seconds 8
 $results["godot_logcat_errors"] = (& $adb logcat -d -v brief *:E | Select-String -NotMatch "chatty|Scudo" | Select-Object -First 10) -join "`n"
 
 # --- 5. persistence across a real process death --------------------------------------
 
 Say "5. persistence"
-Test-Persistence "com.gabella.cl01spike" "com.godot.game.GodotApp" "Godot"
-Test-Persistence "com.gabella.cl01spikeweb" ".MainActivity" "Capacitor"
+Test-Persistence "com.gabella.cl01spike" "Godot"
+Test-Persistence "com.gabella.cl01spikeweb" "Capacitor"
+if (-not $SkipUnity) { Test-Persistence "com.gabella.cl01spikeunity" "Unity" }
 
 # --- 6. report -----------------------------------------------------------------------
 

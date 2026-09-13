@@ -262,7 +262,146 @@ and its licensing client lives under `WindowsApps`. Compilation proceeded regard
 | # | What happened | Cost |
 |---|---|---|
 | 0 | `build_unity.ps1` failed before reaching Unity: *Missing string terminator*. **My script, not Unity:** Windows PowerShell 5.1 reads BOM-less UTF-8 as ANSI, so an em dash's byte `0x94` became cp1252's closing double quote. `device_window.ps1` had the same defect and would have died mid phone session. Both made ASCII-only and checked with the real parser. Not counted against Unity. | 1 fix, 2 files |
-| 1 | **Correction 5 — Unity's first.** 30 × `CS0246`/`CS0234`: `UnityEngine.UI` and `UnityEngine.EventSystems` not found. **One root cause:** since 2019 UGUI is a *package* (`com.unity.ugui`), not engine code. The hand-written project had no `Packages/manifest.json`, so Unity generated one with the built-in modules only — including `com.unity.modules.ui`, which sounds like the right thing and is not. Script compilation took 12.0 s to report it. | pending rebuild |
+| 1 | **Correction 5 — Unity's first.** 30 × `CS0246`/`CS0234`: `UnityEngine.UI` and `UnityEngine.EventSystems` not found. **One root cause:** since 2019 UGUI is a *package* (`com.unity.ugui`), not engine code. The hand-written project had no `Packages/manifest.json`, so Unity generated one with the built-in modules only — including `com.unity.modules.ui`, which sounds like the right thing and is not. Script compilation took 12.0 s to report it. | 1 manifest line |
+| 2 | Rebuild **succeeded**: `[spike] result=Succeeded ... errors=0`, **zero C# errors**. Everything written unaided against the API while the editor was still downloading compiled on the first real attempt once the package was present. | — |
+
+**Unity correction count at compile time: 1** (the package manifest), **0** C# errors — but see the first visual run below: four more defects compiled clean.
+
+### Unity — build reality (2026-09-13)
+
+| Measure | Unity 6.3 LTS | Godot 4.7.2 | Capacitor 8.5.2 |
+|---|---|---|---|
+| Corrections | **5** — 1 package manifest + 4 slice defects that compiled clean (#6–#9) | 1 | 3 + 1 toolchain |
+| Debug APK, arm64-v8a | **34.90 MB** (Development build, IL2CPP) | 26.96 MB | 4.34 MB |
+| Cold build | **312.5 s** Unity-reported; 6 min 19 s wall including first project import | 10.4 s | ~2 min incl. downloads; 55 s warm |
+| of which Gradle | 101.1 s | n/a (prebuilt template) | most of it |
+| Edit → APK | **71.6 s** wall (Unity reports 44.7 s build), one-constant change | 10.1 s | 16.4 s |
+| `targetSdkVersion` | **36** (enum resolved, no fallback) | 36 | 36 |
+| `minSdkVersion` | **25** — the script set 24; Unity raised it **silently**, no log warning | 24 | 24 |
+| Signing | v2 | v2 + v3 | v2 |
+| Native `.so` | **6** — `libil2cpp` 45.36 MB, `libunity` 32.36 MB, `libc++_shared` 1.23, `libgame` 0.24, `libswappywrapper` 0.22, `libmain` 0.01 | 2 | 0 |
+| 16 KB page compliance | **PASS, verified empirically** — `p_align = 16384` on all six | PASS, empirical | n/a, no native code |
+| JDK | **bundled OpenJDK** — no system JDK needed at all | 17 | 21 |
+| Build toolchain | bundled Gradle 9.1.0 / AGP 9.0.0 | none needed for prebuilt template | AGP 8.13.0 / Gradle 8.14.3 |
+
+**Do not quote Unity's `size=539.17 MB`.** That is `BuildReport.summary.totalSize`, the
+uncompressed staging content, not the APK. The APK is 34.90 MB.
+
+**Nor the incremental APK's 48.46 MB.** The one-constant rebuild produced a 48.46 MB APK
+from the *same* content. Walking the zip structure directly (central directory → local
+headers → gaps) accounted for 48.44 of its 48.46 MB:
+
+| Part | Size |
+|---|---|
+| Compressed payload, 465 entries | 34.81 MB — same as the cold build |
+| **Holes between entries** | **13.57 MB in 4 gaps** |
+| Alignment padding in local extra fields | 0.00 MB |
+| Central directory | 0.04 MB |
+
+The largest holes are **11.23 MB** right before `lib/arm64-v8a/libmain.so`, where the old
+`libil2cpp` slot sat, and **2.07 MB**, exactly the compressed size of `global-metadata.dat`.
+Changing one constant rewrote IL2CPP's binary and metadata; Gradle's incremental packager
+appended the new copies and left the old slots as dead space rather than repacking.
+Every native library's raw size was byte-identical to the cold build.
+
+**For the kit:** a Unity dev APK's size is meaningless after an incremental build. Size
+budgets must be read from a clean build, and anything installed on a device for
+measurement should be built clean too.
+
+**Phase timeline of the cold build**, from artifact timestamps: 13:20:35 start ·
+13:22:27 Unity linker · 13:22:41 IL2CPP conversion done · 13:24:59 native C++ compile done
+and Gradle project exported · 13:25:10 Gradle starts · 13:26:54 exit 0.
+
+**Fairness notes.** All three are debug/development arm64 builds, so the sizes compare like
+for like, but none is release-optimised: Unity's IL2CPP with managed stripping, Godot's
+release template (25.21 MB unsigned) and a minified Capacitor bundle would each shrink.
+Unity's six native libraries total ~79 MB uncompressed. Its bundled toolchain is a genuine
+advantage — no JDK juggling — bought with a 7.75 GB install.
+
+**Licence path held, but noisily:** the log still carries `LicensingClient has failed
+validation; ignoring` and `Access token is unavailable`, followed by `Successfully resolved
+entitlement details`. Works today; worth knowing if a future Hub or editor update tightens
+the check against the sandboxed MSIX licensing client.
+
+### Unity — first visual run: compiles clean, renders wrong
+
+The Godot and Phaser slices were checked visually on the desktop before any phone existed,
+so the Unity one got the same: a Windows player (Mono, windowed 540×960, **39.3 s** to build)
+launched with `--shot`, captured by `ScreenCapture.CaptureScreenshotAsTexture()` inside the
+game — never a desktop grab.
+
+**Unity is the only candidate whose first visual run was wrong.** Zero compiler errors,
+three visible defects plus one caught by reading the code. All four are **Claude's bugs**,
+not engine faults — but three of them live in code the other two engines never asked for.
+
+| # | Defect | How found | Root cause | Fix |
+|---|---|---|---|---|
+| 6 | Tray buttons blank | code review, before any run | `NewText("Label", …)` created, `.text` never assigned | assign `ServiceNames[s]` |
+| 7 | **Aircraft drawn as disconnected shards** | screenshot | Hand-written ear clipping (UGUI has no polygon primitive). `SignedArea` used the `(b.x−a.x)(b.y+a.y)` form, **positive for clockwise**, so the outline was walked backwards and real ears rejected; and `InTriangle` counted points *on* an edge as inside, which the fuselage's collinear vertices trip | standard shoelace; strict-interior test |
+| 8 | White squares in unused need slots | screenshot | unused slots hid icon and label but not the **fill** image; a sprite-less `Image` draws solid white | deactivate the fill too |
+| 9 | **Shift clock lost ~2 s at launch** | on-screen perf readout: `drift +2.041 s` (Godot +0.032, Phaser 0.000) | clock started in `Awake`; the first `Update`'s `unscaledDeltaTime` spans everything before the first rendered frame, splash included | arm the clock on the first rendered frame, discard that delta |
+
+**Fix 7 was proven before spending a rebuild on it.** A line-for-line JS port of the
+triangulator, run on the real outline in the same pixel space:
+
+| Version | Triangles (need n−2 = 19) | Area covered (px²) | Result |
+|---|---|---|---|
+| Original | 10 | 20,522 of 32,533 | **FAIL** — matches the shards |
+| Fixed | 19 | 32,533 of 32,533 | **PASS** |
+
+Also turned off: `PlayerSettings.SplashScreen.show = false` in both build methods — removes
+the splash from timer and cold-start numbers, and tests the research claim that the splash is
+optional on Unity 6 Personal against a real Personal licence rather than a blog post.
+
+Not fixed, noted: the gate light is a square (an `Image` without a sprite), where the other
+two draw a circle. Cosmetic.
+
+**Status: VERIFIED 2026-09-13.** Re-built (25.2 s; Unity 11.8 s) and re-captured:
+
+| Check | Before | After |
+|---|---|---|
+| Aircraft | disconnected shards | whole silhouette, identical to the Godot and Phaser slices |
+| Unused need slots | solid white squares | hidden |
+| Tray and need labels | tray blank | all present |
+| Timer drift at launch | **+2.041 s** | **−0.005 s** |
+| Time left ~1.5 s into the shift | 38.8 | 43.3 |
+
+**Unity's total: 5 corrections** — 1 package manifest + 4 slice defects (#6–#9).
+Fairness note: Capacitor's first version also shipped without the service-name labels; that
+was logged as a parity pass rather than a correction. Counted the same way as Unity's #6,
+Capacitor would be 3 API + 1 parity omission + 1 toolchain.
+
+**Splash claim tested against a real licence:** `PlayerSettings.SplashScreen.show = false`
+built successfully on **Unity Personal**, and `ProjectSettings.asset` persisted
+`m_ShowUnitySplashScreen: 0`. The research claim holds. One oddity worth knowing: the build
+log still lists `Built-in Texture2D: Splash Screen Unity Logo — 2.7 MB`, so the logo
+texture ships even with the splash off (`m_ShowUnitySplashLogo` remains 1).
+
+### Pre-flight catch: two of three device launch commands were wrong
+
+Before any phone session, each built APK's manifest was read to check the activity names
+hard-coded in `device_window.ps1`:
+
+| Candidate | Script used | Actual launcher | Would it have worked? |
+|---|---|---|---|
+| Capacitor | `.MainActivity` | `com.gabella.cl01spikeweb.MainActivity` | yes |
+| **Unity** | `com.unity3d.player.UnityPlayerActivity` | **`com.unity3d.player.UnityPlayerGameActivity`** (Unity 6's GameActivity default) | **no** — activity not found |
+| **Godot** | `com.godot.game.GodotApp` | **activity-alias `com.godot.game.GodotAppLauncher`**, targeting `GodotApp`, which is `exported=false` | **no** — `adb am start` refuses non-exported activities |
+
+`aapt2 dump badging` reports **no** launchable activity for the Godot APK at all, because it
+does not follow activity-aliases; only the binary manifest's xmltree shows the alias.
+Godot's cold start, logcat scan and persistence check, and Unity's cold start, would all have
+**failed silently in the attended window**. `device_window.ps1` now resolves each launcher
+on the phone itself with `cmd package resolve-activity -c android.intent.category.LAUNCHER`,
+so no activity name is hard-coded anywhere.
+
+**What this says about the productivity axis.** Correction counts alone flatter Unity here.
+Godot's `draw_colored_polygon` and Phaser's `fillPoints` triangulate internally; UGUI made
+Claude write a triangulator, and it was wrong in a way no compiler could catch. The clock bug is
+subtler still: identical logic was correct in Godot and Phaser, and wrong in Unity only
+because of what Unity's first-frame delta contains. On a line where Gian's attention goes to
+play rather than build review, **defects that compile clean and only show up on screen are the
+expensive kind.**
 
 **Error-message quality:** accurate but noisy — thirty lines that all say the same thing, none
 of which names the missing package. Compare Godot's single precise line and `tsc`'s
@@ -271,8 +410,8 @@ the message does not tell you.
 
 ## Still to measure
 
-**Unity, blocked on sign-in:** compile, correction count, APK size, build time, and every
-on-device number.
+**Unity:** compiled, built, and visually verified on the desktop (2026-09-13). Still needs every
+on-device number, like the other two.
 
 **All three, blocked on the phone:**
 

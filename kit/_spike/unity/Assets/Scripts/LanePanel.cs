@@ -109,7 +109,13 @@ public class LanePanel : MonoBehaviour
             bool used = slot < Needs.Count;
             _icons[slot].gameObject.SetActive(used);
             _labels[slot].gameObject.SetActive(used);
-            if (!used) continue;
+            if (!used)
+            {
+                // FIXED 2026-09-13: the fill image was left active on unused slots, and an
+                // Image with no sprite draws solid white.
+                _fills[slot].gameObject.SetActive(false);
+                continue;
+            }
 
             int service = Needs[slot];
             _labels[slot].text = serviceNames[service];

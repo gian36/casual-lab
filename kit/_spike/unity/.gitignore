@@ -6,3 +6,4 @@ UserSettings/
 build/
 *.csproj
 *.sln
+.utmp/
