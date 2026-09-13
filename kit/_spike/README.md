@@ -15,10 +15,22 @@ was expected to be deleted from the moment it was written.
 The only durable output of CL-01 is **`../SPIKE_REPORT_ENGINE.md`** — a Report: produced
 once, then frozen.
 
-Contents:
+## Contents
 
-- `RESEARCH_NOTES.md` — the desk-research phase (ads / consent / IAP / analytics /
-  compliance / longevity for Godot, Unity, web + Capacitor), with dated sources. Working
-  notes; the Report supersedes them.
+| Path | What it is |
+|---|---|
+| `RESEARCH_NOTES.md` | Desk research on ads, consent, IAP, analytics, compliance and longevity for all three candidates, with dated sources |
+| `MEASUREMENTS.md` | The raw measurement log, in the order things happened, including every correction and every harness mistake |
+| `device_results.json` | Output of the first attended device run (cold start, logcat) |
+| `godot/` | The Godot 4.7.2 slice |
+| `capacitor/` | The web + Capacitor 8.5.2 + Phaser 4 slice |
+| `unity/` | The Unity 6.3 LTS slice, UI built in code |
+| `DEVICE_WINDOW.md`, `device_window.ps1` | The attended device session: checklist and script |
+| `device_autotest.sh` | Automated on-device drag and persistence test (adb touch input) |
+| `iteration_loop.sh` | Edit → running-on-device loop timing, with an APK-freshness check |
+| `build_unity.ps1`, `shot_unity.ps1` | Unity batch-mode Android build, and an engine-side desktop capture |
+
+Build outputs, caches and dependencies (`build/`, `Library/`, `node_modules/`, `.godot/`,
+`android/`, logs) are git-ignored and can be deleted freely.
 
 Safe to delete this whole folder once the Report is landed and `[OPEN-K1]` is signed.

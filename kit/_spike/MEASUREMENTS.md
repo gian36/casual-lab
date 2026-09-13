@@ -125,7 +125,7 @@ Capacitor's generated project pins **AGP 8.13.0** and **Gradle 8.14.3**.
 | 4 | Clean types, clean build, correct visuals on the first run in a browser. | — |
 | 5 | Parity pass: the first version omitted the service-name labels the Godot slice draws. Added as pooled text objects created once and repositioned, never per frame. | ~10 min |
 
-**Corrections: 3 (vs 1 for Godot)** — and all three were **Phaser 4 API drift**, not
+**Corrections: 3 (vs 1 for Godot): 2 code + 1 toolchain (JDK 21, logged below).** Both code corrections were **Phaser 4 API drift**, not
 language or engine problems. This is the honest shape of the productivity difference:
 Claude's priors about Phaser are a major version out of date, while GDScript's surface
 had not moved under it. Both toolchains caught their errors **before the code ran** —
