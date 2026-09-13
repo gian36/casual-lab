@@ -600,6 +600,56 @@ stored values are still being read.
 
 **Judgement items — drag feel, stress ceiling, audio: pending Gian's report.**
 
+### Automated on-device test — drag and persistence, Godot and Capacitor (2026-09-13, 15:27–15:31)
+
+Gian's own play left Godot and Capacitor with nothing saved. Rather than guess why, the same test was
+run on both engines by Claude over adb: real touch input (`input swipe`, 450 ms, from each of the four
+tray buttons onto each of the four lanes, three sweeps inside the 45 s shift), let the shift run out,
+`force-stop`, read the stored value from app storage, relaunch, screenshot. Coordinates came from
+on-device screenshots, not from layout maths.
+
+| | Godot 4.7.2 | Capacitor 8.5.2 + Phaser 4 |
+|---|---|---|
+| **Drag works with real touch on device** | **yes** — SERVED 7 with 19.4 s left | **yes** — SERVED 7 with 15.7 s left |
+| fps during drags | **120** | **121** |
+| frame max / **drag max** | 8.3 ms / **8.3 ms** | 8.3 ms / **8.3 ms** |
+| timer drift at that point | +0.165 s | +0.003 s |
+| **Stored after `force-stop`** | `best.cfg`: `[score] best=12` | `localStorage` `cl01.best` = 12, **both before and after** the `force-stop` |
+| BEST on relaunch | **12** | **12** |
+
+What this settles:
+
+- **Persistence works on device in all three engines.** Unity was already confirmed from Gian's session:
+  `PlayerPrefs` held `cl01.best = 8`, and BEST 8 showed on relaunch.
+- **Gian's zero scores in Godot and Capacitor were not a persistence bug.** The save fires only when a shift
+  ends with an improved score, and step 3's reinstall had wiped any earlier value — so no aircraft were
+  served in those two shifts.
+- **The WebView-flush worry did not materialise.** Capacitor's `localStorage` was already on disk before
+  the `force-stop`, about 3 s after the save.
+- **Drag max 8.3 ms at 120 Hz in both engines means no dropped frame while dragging** — on this flagship.
+  Drag *feel* is still Gian's judgement; this only says the frames were delivered.
+- **100 extra aircraft cost nothing measurable** in either engine: `planes 104` showed with frame max
+  still 8.3 ms. The real sprite ceiling was not reached and needs a deliberate stress run.
+
+Unexplained, recorded rather than guessed: `stress +100` fired once during each automated run, and
+Godot's relaunch screenshot also shows `planes 104` on what should have been a fresh process.
+
+### On-device layout findings (from screenshots)
+
+- **Unity's UI was clipped on this phone — correction #10, Claude's.** `CanvasScaler.matchWidthOrHeight = 1`
+  (match height) on a 1440×3120 screen, which is taller than 9:16, scaled the 1080×1920 layout by 1.625 to
+  1755 px wide. **The PUSH tray button, the perf readout, the stress button and the lanes' right edges were
+  off-screen** — Gian's Unity score of 8 was earned without PUSH. Godot (`canvas_items` + `expand`) and
+  Phaser (`Scale.FIT`) both fitted the same screen correctly. Fixed to match width; rebuild and on-device
+  re-check in progress.
+- **Capacitor is not full-screen by default.** The status bar and navigation bar stay visible and the game
+  is letterboxed between them; Godot (`immersive_mode`) and Unity run edge-to-edge. Going full-screen in a
+  WebView app needs a status-bar/immersive plugin or native config — small, but extra kit work for this
+  candidate.
+- **Idle frame rate:** Godot **121 fps** (the display's 120 Hz); Capacitor **101 fps** at idle in one
+  screenshot, 95 in another, 121 during the automated drags — the WebView's frame pacing varied where
+  Godot's did not.
+
 **What this says about the productivity axis.** Correction counts alone flatter Unity here.
 Godot's `draw_colored_polygon` and Phaser's `fillPoints` triangulate internally; UGUI made
 Claude write a triangulator, and it was wrong in a way no compiler could catch. The clock bug is
