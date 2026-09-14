@@ -30,7 +30,8 @@ space (`casual-lab/<slug>/`) and is worked there, never here.
 - `PORTFOLIO.md` — every concept, its gate status, and the line ledger (⚖️ Awaiting Gian).
 - `../studio/templates/CASUAL_CONCEPT_GATE.template.md` — the intake gate.
 - `../studio/STUDIO_GLOSSARY.md` — studio vocabulary; its definitions win everywhere.
-- `kit/` — the shared base (Claude Code's zone once the engine is ruled).
+- `kit/` — the shared base, **Unity 6.3 LTS** (`LINE_CHARTER.md` §3, ruled 2026-09-13).
+  Claude Code's zone.
 
 ## Zones
 

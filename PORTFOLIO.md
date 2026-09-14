@@ -1,8 +1,9 @@
 # PORTFOLIO.md — Casual Lab concept ledger
 
-**Status:** DRAFT 2026-09-11. Four entries deposited from the Hallway (Gian + ChatGPT,
-2026-09-10, originally in Spanish; English from here on). None has passed the gate.
-Entries are append-only; status changes in place. Ledger numbers (C01…) are line-local;
+**Status:** DRAFT, last touched 2026-09-13. Four entries deposited from the Hallway (Gian + ChatGPT,
+2026-09-10, originally in Spanish; English from here on). **C02 has passed the gate
+(GREEN — Prototype, 2026-09-11); C01 re-charters in its own space; C03 and C04 are
+deposited, gate not filled.** Entries are append-only; status changes in place. Ledger numbers (C01…) are line-local;
 studio project numbers are assigned at GREEN.
 **Build slot:** empty (one game in build at a time — charter §6). C02 Flight Dispatch is at
 **prototype**, which per §6 does not occupy the slot; the slot fills when it enters
@@ -12,14 +13,63 @@ pre-production.
 
 | id | raised | item | status |
 |---|---|---|---|
-| CL-01 | founding | Engine for the kit (`LINE_CHARTER.md` [OPEN-K1]) — by spike, per studio S12. The spike is the line's first Claude Code session | RAISED |
 | CL-05 | 2026-09-11 | Backend posture for the line. Charter §6 makes "backend required = NO" a hard gate floor, but never asks whether a backend is *desirable* — and the standard fixes for weak retention (leaderboards, daily events, cloud save) all require one. Gian reserved this for its own session. Until ruled, every gate floor answer of NO is an answer about that concept's scope, not a line-wide ban | RAISED |
-| CL-06 | 2026-09-11 | Studio project number for C02 Flight Dispatch = **005**. Not a ruling to make: numbering is studio-wide across divisions and lines, already signed (S11, 2026-09-10; handbook "numbers are for shippable products only", S12; precedent — map-painter kept 002 when it moved lines, S10). Outstanding only as a clerical act: record 005 for C02 in the studio ledger, from the studio's own space | PENDING STUDIO ACTION |
 | CL-07 | 2026-09-11 | `../studio/templates/CASUAL_CONCEPT_GATE.template.md` numbering slip: the header says "Gian decides §15", but §15 is the Prototype test and the Decision is §17. Surfaced from the C02 gate run; fix belongs to the studio's own space | RAISED |
+| CL-08 | 2026-09-13 | **Reference test device.** Every device number in the spike came from a Galaxy S24 Ultra; the brief asked for mid-range. Which phone is the line's target? Cold start, frame pacing and the sprite ceiling are all unknown below flagship — and C02's dense apron is the concept most exposed to that. Proposed by `kit/SPIKE_REPORT_ENGINE.md` §8.1 | RAISED |
+| CL-09 | 2026-09-13 | **Machine-setup doctrine.** The spike's most important environment finding: toolchains Claude installs from inside the Claude desktop app into a *new* AppData folder are MSIX-redirected into the app's private storage and are **invisible to Gian's own shells**. The Android SDK had to be moved to `C:\Android\Sdk`. Doctrine should require explicit install paths outside AppData, verified from the founder's shell. Compounds under Unity (7.75 GB, licence server, UAC). Proposed by §8.3. **Second instance, 2026-09-13 — same root cause, new victim:** Cowork's own Linux workspace failed to boot, so session CL-S02 could not run git. The mount that failed was **not** the project folder but the session's scratch `outputs` directory, whose real path is `C:\Users\gianv\AppData\Local\Packages\Claude_<pkg>\LocalCache\Roaming\Claude\…` — i.e. `AppData\Roaming` **redirected into the MSIX package container**, exactly the mechanism that hid the Android SDK. The sandbox could not reach it (Plan9 share `c` unmounted, following a Windows update of 2026-09-08) and the failed mount aborted the whole boot, taking `C:\Dev\gabella\casual-lab` with it — a plain path that would likely have mounted on its own. Claude Code was unaffected. So the doctrine needs two clauses, not one: explicit install paths outside AppData, **and** a named authoritative surface for git and builds, because Cowork's shell is not reliably available and its failure mode is all-or-nothing | RAISED |
+| CL-10 | 2026-09-13 | **Attended-window ritual.** CL-01 needed Gian physically at the machine for the SDK licence, a Samsung USB driver, a Unity account behind UAC, and the phone. Charter §5 calls this line the low-attention, remotely-drivable slot; device-touching tasks contradict that unless scheduled. The Unity ruling raises the frequency of these windows, not lowers it. Proposed by §8.4 | RAISED |
+| CL-11 | 2026-09-13 | **CLI telemetry defaults.** The Capacitor CLI reported "sharing anonymous usage data" on Gian's machine during the spike. Small in itself; machine-setup doctrine should decide the telemetry default for every tool the line installs. Survives the engine ruling — Unity's editor has its own telemetry. Proposed by §8.6 | RAISED |
+| CL-12 | 2026-09-13 | **Unity dependency posture.** Reshaped from §8.2 (which asked for a plugin-abandonment trigger *if the engine is Godot*). Under Unity the monetization bus-factor risk dissolves, but two others replace it: **licence terms** (Unity introduced the Runtime Fee in 2023 and reversed it in 2024 — the line's premise is many small titles with long tails, so terms that moved once can move again) and **first-party package deprecation** — note the spike found Unity's `com.unity.purchasing` 4.15.1 on Billing 8.3.0 (runway to 2027) against the Godot plugin's 9.1.0 (2028), so first-party does not mean most-current. What is the trigger for re-opening the engine question, and what does the line do if Personal's $200K threshold or its terms change? Raised in the Hallway, 2026-09-13 | RAISED |
+
+**Dissolved by the CL-01 ruling, recorded rather than dropped:** §8.2 in its original form
+(Godot plugin-abandonment trigger — moot; monetization is first-party under Unity, and the
+reshaped risk is CL-12) · §8.5 (analytics vendor GameAnalytics vs custom Firebase — moot;
+Unity ships first-party Firebase Analytics, v13.16.0, 2026-08-27).
 
 Landed: CL-02 (kit is a tool, not a numbered project — studio S12, 2026-09-10) · CL-03
 (authorship posture — studio S13, 2026-09-10) · **CL-04** (first gate = C02 Flight
-Dispatch — ruled by Gian, 2026-09-11, this session).
+Dispatch — ruled by Gian, 2026-09-11) · **CL-01** (engine = **Unity 6.3 LTS** — ruled by
+Gian, 2026-09-13, this session; see below) · **CL-06** (C02 Flight Dispatch = **studio
+project 005** — signed by Gian, 2026-09-13, this session; see below).
+
+### CL-06 — landed 2026-09-13
+
+**Signed: C02 Flight Dispatch is studio project 005.** The number was never in doubt —
+studio-wide numbering was signed at S11 (2026-09-10), "numbers are for shippable products
+only" at S12, and map-painter keeping 002 across a line move set the precedent at S10.
+Gian's signature closes it for the line.
+
+**One thread does not close here.** The line ledger can record 005; the *studio* ledger
+entry is a clerical act in `../studio/`, which this space never edits (`CLAUDE.md` — "know
+these exist; never edit them"). Carried to the studio's own space, alongside **CL-07**,
+which is also a studio-side fix. Until that is done, 005 is authoritative in this line's
+documents and absent from the studio's.
+
+### CL-01 — landed 2026-09-13
+
+**Ruling: Unity 6.3 LTS.** Signed into `LINE_CHARTER.md` §3, closing `[OPEN-K1]`. Evidence:
+`kit/SPIKE_REPORT_ENGINE.md` (frozen Report, sessions 2026-09-12/13, Claude Code, `kit/`
+only).
+
+**The ruling goes against the Report's recommendation.** The Report recommended Godot 4.7
+on Claude productivity (1 correction vs Unity's 7; ~25 s vs ~60 s edit-to-device; zero
+install gates; no permissions requested). Gian ruled on the axis the Report's dissent §6
+names as the alternative weighting — **monetization longevity** — plus the 2D content
+pipeline, which the spike did not measure in either engine (Unity's slice was built in
+uGUI, not the sprite pipeline; the "hand-written triangulator drew the aircraft as shards"
+defect is evidence about uGUI's missing polygon primitive, not about Unity's 2D art
+tooling).
+
+**Accepted risk, on the record:** slower loops, two human install gates, 7.75 GB, and
+**six of seven Unity defects compiling clean** — caught only by review, screenshot or the
+phone. Charter §5 puts Gian's attention on the gate and on play, not build review, and he
+has no prior experience in any candidate engine; the line therefore has no strong human
+reviewer downstream. Three kit conditions attached in charter §3 (pin the manifest, assert
+APK permissions at build time, fail the build on unrequested packages) exist to hold the
+Report's counter-argument that Unity's defects are one-time and kit-solvable.
+
+**Unblocks:** the kit can start (charter §3), and with it C02's Prototype Brief — which
+still also waits on CL-06.
 
 ---
 
@@ -56,9 +106,10 @@ community — IDEAS 001 [OPEN-1]) · real-map data licensing ([OPEN-2]) · name 
 ## C02 — Flight Dispatch — casual apron management
 
 **Status: GREEN — Prototype** `[RULED by Gian, 2026-09-11]`. Gate run in the Hallway,
-2026-09-11. **Studio project 005** (studio-wide numbering per S11; ledger entry pending —
-CL-06). Next deliverable: a **Prototype Brief**, not a
-GDD. Nothing below binds the design; it was written to decide GREEN, not to specify the
+2026-09-11. **Studio project 005** `[SIGNED by Gian, 2026-09-13 — CL-06]`; the studio-side
+ledger entry remains as a clerical act in `../studio/`. **Gate complete as of 2026-09-13**
+— §17's "Why" is written and CL-01's engine is ruled, so the Prototype Brief is unblocked.
+Next deliverable: a **Prototype Brief**, not a GDD. Nothing below binds the design; it was written to decide GREEN, not to specify the
 game.
 
 ### §1 Snapshot
@@ -234,9 +285,23 @@ store publishing, ads and consent. The counter is that Flight Dispatch is the mo
 commercially legible of the four and the one Gian wants to make, and enthusiasm is a real
 production input for a solo dev.
 
-**Why (Gian):** *[to be written — ≤ 3 paragraphs]*
+**Why (Gian):** I see a viable product here. Not a big one, but one that could catch some
+players — and that is more than I can say for a concept I would only be building in order
+to learn from it. Of the four in the portfolio this is the most legible to someone
+scrolling a store page, and legibility is what an ad-funded model actually runs on.
 
-**Signed:** Gian, 2026-09-11.
+The other half is that I want a real, shipped product. This line exists so the studio meets
+store publishing, ads, consent and analytics before Flag Carrier needs them, and I cannot
+see the inner workings of any of that from a prototype I never release. Flight Dispatch is
+the one I want to finish. That answers the sequencing objection in §17's devil's advocate
+only partly — Cargo Move would still have been the cheaper way to learn the machinery — but
+a cheaper first title I am not motivated to ship would teach the studio nothing about
+shipping, which is the whole point of the exercise.
+
+*`[Dictated by Gian in the Hallway, 2026-09-13; drafted from his words by Cowork. Gian's
+section — correct in place.]`*
+
+**Signed:** Gian, 2026-09-11. **§17 "Why" completed 2026-09-13 — the gate is now complete.**
 
 **Ad hook (kept from the Hallway deposit):** three aircraft on screen; one asks ⛽🍱🧳, one
 is ready, "ARRIVING 00:10" — free the gate in time.

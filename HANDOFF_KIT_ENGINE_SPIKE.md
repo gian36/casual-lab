@@ -1,7 +1,13 @@
 # HANDOFF_KIT_ENGINE_SPIKE.md — CL-01, the line's first Claude Code session
 
-**Status:** OPEN, written 2026-09-12 in the line's Cowork space.
-**Closes:** `PORTFOLIO.md` ledger row **CL-01** · `LINE_CHARTER.md` §3 **[OPEN-K1]**.
+**Status: CLOSED 2026-09-13.** Written 2026-09-12 in the line's Cowork space. All exit
+conditions met: `kit/SPIKE_REPORT_ENGINE.md` written and frozen, spike code quarantined
+under `kit/_spike/` with its README, and the ruling landed in Cowork (session CL-S02).
+**Outcome: Unity 6.3 LTS** — *against* the Report's recommendation of Godot 4.7, on the
+weighting the Report's own dissent §6 names. Kept for the record; the live documents are
+`LINE_CHARTER.md` §3 and `PORTFOLIO.md` CL-01. Everything below is the brief as issued and
+is no longer instructions to anyone.
+**Closed:** `PORTFOLIO.md` ledger row **CL-01** · `LINE_CHARTER.md` §3 **[OPEN-K1]**.
 **Surface:** Claude Code, terminal, folder `C:\Dev\gabella\casual-lab`.
 **Zone:** `kit/` only. This session never edits the docs zone (`CLAUDE.md`,
 `LINE_CHARTER.md`, `PORTFOLIO.md`, `HANDOFF_*`, `SESSION_LOG.md`) — those are Cowork's.
