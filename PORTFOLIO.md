@@ -20,6 +20,9 @@ pre-production.
 | CL-10 | 2026-09-13 | **Attended-window ritual.** CL-01 needed Gian physically at the machine for the SDK licence, a Samsung USB driver, a Unity account behind UAC, and the phone. Charter §5 calls this line the low-attention, remotely-drivable slot; device-touching tasks contradict that unless scheduled. The Unity ruling raises the frequency of these windows, not lowers it. Proposed by §8.4 | RAISED |
 | CL-11 | 2026-09-13 | **CLI telemetry defaults.** The Capacitor CLI reported "sharing anonymous usage data" on Gian's machine during the spike. Small in itself; machine-setup doctrine should decide the telemetry default for every tool the line installs. Survives the engine ruling — Unity's editor has its own telemetry. Proposed by §8.6 | RAISED |
 | CL-12 | 2026-09-13 | **Unity dependency posture.** Reshaped from §8.2 (which asked for a plugin-abandonment trigger *if the engine is Godot*). Under Unity the monetization bus-factor risk dissolves, but two others replace it: **licence terms** (Unity introduced the Runtime Fee in 2023 and reversed it in 2024 — the line's premise is many small titles with long tails, so terms that moved once can move again) and **first-party package deprecation** — note the spike found Unity's `com.unity.purchasing` 4.15.1 on Billing 8.3.0 (runway to 2027) against the Godot plugin's 9.1.0 (2028), so first-party does not mean most-current. What is the trigger for re-opening the engine question, and what does the line do if Personal's $200K threshold or its terms change? Raised in the Hallway, 2026-09-13 | RAISED |
+| CL-13 | 2026-09-13 | **`map-painter/` is versioned nowhere.** The founding checklist's §2 set the line's convention — "`.gitignore` with `/map-painter/` (one line per game slug; **each game is its own nested repo**)" — but the nested repo was never created. `map-painter/` is gitignored by the line repo *and* contains no `.git`, so 002's GDD, its 21 open items and `CHRONICLE_INVARIANTS.md` are untracked on disk with no history and no remote. Found 2026-09-13 while ruling 005's repo posture. Belongs to 002's re-charter session to fix, but the line ledger records it because the line owns the convention | RAISED |
+| CL-14 | 2026-09-13 | **Charter §7's rename cost is overstated.** §7 says renaming `casual-lab/` is cheap "only before the first game repo exists," which is what gated 005's repo. But games are **gitignored**, not submodules — the loosest possible coupling. A nested repo carries its own remote and history and does not know what its parent folder is called, so a later line rename costs a directory rename plus one GitHub repo rename; the game repos are untouched. The clause was written for a tighter structure than the one actually built. Proposed rewording: state the real cost and stop treating `[OPEN-N1]` as a gate on founding game repos | RAISED |
+| CL-15 | 2026-09-13 | **No Prototype Brief template exists.** `../studio/templates/` holds eleven templates; none is a Prototype Brief, though `STUDIO_GLOSSARY.md` defines the artifact's six required contents. 005's Brief was written to that glossary definition and is the line's first. Harvest it back as `templates/PROTOTYPE_BRIEF.template.md` once it has survived one real prototype — studio-side act, like CL-06 and CL-07 | RAISED |
 
 **Dissolved by the CL-01 ruling, recorded rather than dropped:** §8.2 in its original form
 (Godot plugin-abandonment trigger — moot; monetization is first-party under Unity, and the
@@ -109,8 +112,19 @@ community — IDEAS 001 [OPEN-1]) · real-map data licensing ([OPEN-2]) · name 
 2026-09-11. **Studio project 005** `[SIGNED by Gian, 2026-09-13 — CL-06]`; the studio-side
 ledger entry remains as a clerical act in `../studio/`. **Gate complete as of 2026-09-13**
 — §17's "Why" is written and CL-01's engine is ruled, so the Prototype Brief is unblocked.
-Next deliverable: a **Prototype Brief**, not a GDD. Nothing below binds the design; it was written to decide GREEN, not to specify the
+Nothing below binds the design; it was written to decide GREEN, not to specify the
 game.
+
+> **➜ The design work has moved to `flight-dispatch/` (its own space and nested repo,
+> founded 2026-09-13).** The Prototype Brief lives at
+> `flight-dispatch/PROTOTYPE_BRIEF.md` — DRAFT, awaiting Gian's signature, with
+> `[OPEN-FD1]`–`[OPEN-FD4]` open there. **This ledger keeps owning the concept's status**:
+> the prototype's verdict (GREEN → pre-production, or killed per §16) is deposited *here*.
+> Two rulings made 2026-09-13 when the space was founded:
+> **build surface = web**, a single self-contained HTML page, explicitly *not* Unity —
+> CL-01's ruling is scoped to the `kit/`, which charter §2 places at pre-production, after
+> a successful playtest; and **every tester plays on a touch device**.
+> **Build slot still empty** — charter §6: prototype does not occupy it.
 
 ### §1 Snapshot
 - **Working title:** Flight Dispatch
