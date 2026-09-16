@@ -128,6 +128,16 @@ better understood.
   2026-09-10 — "low maintenance" as a floor discarded as too ambiguous]`. Maintenance risk
   is judged in the gate, not a floor. The number of live titles is reviewed at every
   release.
+  - **What "ongoing human operations" means** `[RULED by Gian, 2026-09-15]`. The floor is
+    about **supporting the shipped product** — Gian does not want titles that oblige him to
+    stay in contact with people or to keep answering for them after release. It is **not**
+    about human involvement during construction, which is obvious and expected: building a
+    game involves people, and on the build side Claude has more agency with Gian revising
+    what needs revising. So a gate answer of NO means *this product will not demand ongoing
+    human operations once live*; it never means no human does any work to make it. Ruled
+    while answering 005's `[OPEN-FD4]`, where a hosting dependency was wrongly weighed
+    against this floor. Interacts with CL-05 (backend posture), which is the same question
+    asked about infrastructure rather than people.
 - **No design doc before GREEN.** Enthusiasm is written into the gate, nowhere else.
 - **Scope smuggling** (handbook anti-pattern 5) applies with extra force: entering the MVP
   requires a removal.
@@ -140,6 +150,9 @@ better understood.
   before the first game repo exists).
 
 ## Changelog
+- 2026-09-15 — §6 clarified: "ongoing human operations" governs the **shipped product**
+  (no obligation to stay in contact with people after release), not construction-time
+  human involvement. Ruled while answering 005's `[OPEN-FD4]`.
 - 2026-09-13 — §3 `[OPEN-K1]` signed: engine = **Unity 6.3 LTS**, against the spike
   Report's recommendation, on the dissent's weighting. Three kit conditions attached.
 - 2026-09-11 — founded from the studio handoff; clauses pending signature.
