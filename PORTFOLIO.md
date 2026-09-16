@@ -120,8 +120,8 @@ game.
 
 > **➜ The design work has moved to `flight-dispatch/` (its own space and nested repo,
 > founded 2026-09-13).** The Prototype Brief lives at
-> `flight-dispatch/PROTOTYPE_BRIEF.md` — DRAFT, awaiting Gian's signature, with
-> `[OPEN-FD1]`–`[OPEN-FD4]` open there. **This ledger keeps owning the concept's status**:
+> `flight-dispatch/PROTOTYPE_BRIEF.md` — **SIGNED by Gian 2026-09-15**, with all four
+> `[OPEN-FD*]` ruled; it governs the prototype phase and the build is unblocked. **This ledger keeps owning the concept's status**:
 > the prototype's verdict (GREEN → pre-production, or killed per §16) is deposited *here*.
 > Two rulings made 2026-09-13 when the space was founded:
 > **build surface = web**, a single self-contained HTML page, explicitly *not* Unity —

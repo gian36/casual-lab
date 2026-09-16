@@ -1,8 +1,9 @@
 # ROADMAP.md — Casual Lab (working name)
 
 **Status:** line founded 2026-09-11. **In flight:** 005 Flight Dispatch at prototype —
-space founded, Brief written and **awaiting Gian's signature**. **Waits on:** Gian —
-sign `flight-dispatch/PROTOTYPE_BRIEF.md`, rule `[OPEN-FD1]`–`[FD4]`, and CL-05.
+**Brief SIGNED 2026-09-15, all four `[OPEN-FD*]` ruled; the build is unblocked and is the
+line's live work.** Next session runs in **005's own Cowork space**, not here.
+**Waits on:** Gian — S17, S18, CL-13 (⚡ each) and CL-05 (🎯). None of them block 005.
 **Build slot: EMPTY** (charter §6 — one line game in build at a time; a prototype does
 not occupy the slot, pre-production does).
 
@@ -33,8 +34,8 @@ file tracks *work*; that file tracks *concepts and decisions*. If they ever disa
 | Engine question CL-01 → **Unity 6.3 LTS** | Kit | Code + Cowork | 🟢 | Spike report frozen; ruled 2026-09-13 |
 | C02 gate → **GREEN — Prototype** | Gate | Cowork line | 🟢 | Signed 2026-09-11; §17 "Why" 2026-09-13 |
 | 005 space + Prototype Brief | 005 | Cowork line | 🟢 | CL-S03; both repos pushed 2026-09-13 |
-| **Sign the Brief + rule FD1–FD4** | 005 | Cowork line | ⛔ | **Blocked on Gian.** Everything below waits on this |
-| Build `proto/` — 10 timetables, §5 switches, event log | 005 | **Cowork 005 space** | 🔴 | Solvability verified before any testing |
+| Sign the Brief + rule FD1–FD4 | 005 | Cowork line | 🟢 | **All four ruled and the Brief SIGNED 2026-09-15.** The Brief now governs the phase |
+| Build `proto/` — 10 timetables, §5 switches + `QUEUE_VISIBLE`, event log | 005 | **Cowork 005 space** | 🔴 | **Unblocked — this is the line's live work.** Solvability verified before any testing; install the studio preamble first (S18) |
 | Six watched playtests | 005 | device | 🔴 | ≥5 strangers, ≥3 non-sim players; touch device each |
 | **Prototype verdict** → GREEN or kill | 005 | Cowork line | 🔴 | Deposited in `PORTFOLIO.md` C02. The line's next real decision point |
 
