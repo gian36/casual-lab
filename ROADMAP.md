@@ -38,7 +38,7 @@ file tracks *work*; that file tracks *concepts and decisions*. If they ever disa
 | Build `proto/` — 10 timetables, §5 switches + `QUEUE_VISIBLE`, event log | 005 | **Cowork 005 space** | 🟢 | Built FD-S02, 2026-09-16; frozen as a record 2026-10-31. Solvability verified before any testing; install the studio preamble first (S18) |
 | ~~Six watched playtests~~ | 005 | device | — | **Withdrawn 2026-10-31 (CL-17).** 2 of 5 strangers played; the rest never came. The store's closed test replaces the cohort |
 | **Prototype verdict** → GREEN or kill | 005 | Code 005 | 🟢 | **Closed → build, 2026-10-31** (FD-S05). Deposited in `PORTFOLIO.md` C02 |
-| 005 lean GDD: MVP boundary + the one removal | 005 | Code 005 | 🟡 | **v0.1 drafted FD-S06**, awaiting Gian's signature (FD9, FD10, FD14 ⚡). Milestones M1–M5 in its §10 |
+| 005 lean GDD: MVP boundary + the one removal | 005 | Code 005 | 🟢 | **v0.1 SIGNED 2026-10-31** (FD-S07). Milestones M1–M5 in its §10; M1 needs kit v0 and CL-08 |
 | Kit v0 on Unity 6.3 | Kit | Claude Code | 🔴 | **Now the long pole**: every store release needs it. Charter §3's three conditions are kit invariants. Needs CL-08 |
 
 ## Next (not started, not blocking)
