@@ -5,9 +5,9 @@
 (GREEN — Prototype, 2026-09-11); C01 re-charters in its own space; C03 and C04 are
 deposited, gate not filled.** Entries are append-only; status changes in place. Ledger numbers (C01…) are line-local;
 studio project numbers are assigned at GREEN.
-**Build slot:** empty (one game in build at a time — charter §6). C02 Flight Dispatch is at
-**prototype**, which per §6 does not occupy the slot; the slot fills when it enters
-pre-production.
+**Build slot: 005 Flight Dispatch**, since 2026-10-31 (prototype closed and promoted to build —
+see C02 and CL-17). One game in build at a time (charter §6), so a second concept may be at
+gate, not in build, until 005 ships.
 
 ## ⚖️ Awaiting Gian (line ledger — unioned by the studio cockpit)
 
@@ -37,7 +37,10 @@ Landed: CL-02 (kit is a tool, not a numbered project — studio S12, 2026-09-10)
 (authorship posture — studio S13, 2026-09-10) · **CL-04** (first gate = C02 Flight
 Dispatch — ruled by Gian, 2026-09-11) · **CL-01** (engine = **Unity 6.3 LTS** — ruled by
 Gian, 2026-09-13, this session; see below) · **CL-06** (C02 Flight Dispatch = **studio
-project 005** — signed by Gian, 2026-09-13, this session; see below).
+project 005** — signed by Gian, 2026-09-13, this session; see below) · **CL-17** (lighter
+pipeline: prototype optional, Gian's play tunes, the Play Store closed test is the stranger
+test, kill criteria move to the market — ruled by Gian 2026-10-31 in 005 session FD-S05;
+`LINE_CHARTER.md` §2).
 
 ### CL-06 — landed 2026-09-13
 
@@ -112,7 +115,8 @@ community — IDEAS 001 [OPEN-1]) · real-map data licensing ([OPEN-2]) · name 
 
 ## C02 — Flight Dispatch — casual apron management
 
-**Status: GREEN — Prototype** `[RULED by Gian, 2026-09-11]`. Gate run in the Hallway,
+**Status: GREEN — Build** `[RULED by Gian, 2026-10-31 — prototype closed on the evidence in
+hand; verdict below]`. Was GREEN — Prototype `[RULED by Gian, 2026-09-11]`; gate run in the Hallway,
 2026-09-11. **Studio project 005** `[SIGNED by Gian, 2026-09-13 — CL-06]`; the studio-side
 ledger entry remains as a clerical act in `../studio/`. **Gate complete as of 2026-09-13**
 — §17's "Why" is written and CL-01's engine is ruled, so the Prototype Brief is unblocked.
@@ -129,6 +133,17 @@ game.
 > CL-01's ruling is scoped to the `kit/`, which charter §2 places at pre-production, after
 > a successful playtest; and **every tester plays on a touch device**.
 > **Build slot still empty** — charter §6: prototype does not occupy it.
+>
+> **Prototype verdict** `[RULED by Gian, 2026-10-31, session FD-S05]`: **closed on the
+> evidence in hand, promoted to build.** Assigning gates and vehicles produces
+> deliberation: tester 01 retried seven times with a different plan each time, explained a
+> strategy unprompted and waited for the near gate on purpose; tester 02 and Gian's PC pass
+> point the same way. Deliberation *against announced arrivals* is **not proven**: nobody
+> used pre-dispatch, because the two-step is not discoverable (`[OPEN-FD8]`). That moves
+> into build as a design problem, judged by Gian's play. The Brief's pre-registered rule
+> (five strangers) was **not met (2 of 5) and was set aside by this ruling**, not
+> satisfied; the honesty check moves to the market (charter §2 as rewritten, CL-17).
+> **Build slot: now filled by 005.**
 
 ### §1 Snapshot
 - **Working title:** Flight Dispatch

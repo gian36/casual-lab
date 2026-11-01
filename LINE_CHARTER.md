@@ -25,20 +25,42 @@ Shared principles beneath the laws: simple, not trivial · short sessions · one
 difference from the churn per title (gate §12) · new work per game goes into the mechanic,
 everything else comes from the kit.
 
-## 2. Pipeline (replaces handbook §3.1 exploration for this line)
+## 2. Pipeline (replaces handbook §3.1 exploration for this line) `[RULED by Gian, 2026-10-31 — CL-17]`
 
 ```
 Hallway idea → CONCEPT GATE (phone, 20 min) → PORTFOLIO.md entry
    RED    → archived in place, reason written
    YELLOW → revised in place
-   GREEN  → project: folder + repo + studio number + Cowork space
-            → PROTOTYPE BRIEF (not a GDD) → prototype → playtest → success signal?
-               no  → kill per the entry's kill criteria (a successful use of the line)
-               yes → pre-production on the kit → MVP → store release → maintenance tail
+   GREEN  → project: folder + repo + studio number
+            → build on the kit → Gian plays and tunes (family counts) → MVP
+            → Play Store closed test → store release → keep or retire on the numbers
+            (optional, only if the gate asks for it, before the build:
+             PROTOTYPE BRIEF → throwaway prototype → playtest → success signal)
 ```
 
 Gates keep the studio shape: written criteria, devil's advocate by Claude, signed decision
 by Gian. There is no score; the hard floors in the template decide.
+
+**Why the pipeline is light** `[RULED by Gian, 2026-10-31 — CL-17]`. Toybox is the
+quick-turnaround line: shallow games, built, tuned by playing them, shipped. The first run
+of the old pipeline showed the cost: 005's prototype waited six weeks for a stranger cohort
+it could not recruit (2 of 5 testers, 2026-09-19 → 2026-10-31), while the evidence already
+in hand answered most of its question.
+
+- **The prototype is optional.** A Prototype Brief and a throwaway prototype run only when
+  the gate's devil's advocate names a mechanic it doubts and Gian agrees it must be tested
+  before build. Otherwise GREEN goes straight to build.
+- **Gian's play is the tuning loop.** He plays the build (his family counts) and tunes the
+  finished product. No fixed tester cohort, no watched sessions.
+- **Strangers come from the store.** The Play Store closed test is the line's stranger
+  test. Google requires personal developer accounts created after 2023-11-13 to run a
+  closed test with **12 testers for 14 continuous days** before production access
+  (third-party sources, checked 2026-10-31; confirm Google's own wording at the first
+  submission). Recruiting those 12 is a release task, planned from the start of build.
+- **Kill criteria move to the market.** Before the closed test, each title's
+  `PORTFOLIO.md` entry names the numbers that would retire it. A title that misses them is
+  retired, and that is still a successful use of the line.
+- §6's guard is unchanged and reads on *build*: one line game in build at a time.
 
 ## 3. The kit rule `[RULED by Gian, 2026-09-10]`
 
@@ -150,6 +172,11 @@ better understood.
   before the first game repo exists).
 
 ## Changelog
+- 2026-10-31 — **§2 rewritten** `[RULED by Gian]` (CL-17, raised and ruled in 005 session
+  FD-S05): the throwaway prototype and stranger cohort become optional; GREEN → build →
+  Gian's play → Play Store closed test → release → keep or retire on the numbers. "Cowork
+  space" dropped from GREEN's outputs (studio S35). Glossary consequence raised as studio
+  S38.
 - 2026-09-15 — §6 clarified: "ongoing human operations" governs the **shipped product**
   (no obligation to stay in contact with people after release), not construction-time
   human involvement. Ruled while answering 005's `[OPEN-FD4]`.

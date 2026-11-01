@@ -3,6 +3,14 @@
 Every session appends exactly 5 lines. Newest first.
 
 ```
+[FD-S05, from 005] 2026-10-31
+Job: lighten the Toybox pipeline after 005 stalled six weeks waiting for a stranger cohort.
+Changed: LINE_CHARTER.md §2 rewritten + changelog; PORTFOLIO.md (C02 → GREEN — Build with the verdict, build slot = 005, CL-17 landed); ROADMAP.md (status, 005 rows, kit v0 moved to Now, 005's surface = Claude Code).
+Rulings/[OPEN]: RULED by Gian 2026-10-31 — CL-17 (prototype optional; Gian's play tunes; Play Store closed test is the stranger test; kill criteria move to the market) and 005's prototype verdict (closed → build). Studio S38 raised (glossary). Not ruled, only noted: charter §6 keeps 002 Map Painter out of build until 005 ships.
+Next for this area: CL-08 reference phone (⚡, now due); kit v0 on Unity 6.3; 002's re-charter can go to gate under the new §2.
+```
+
+```
 [CL-S05] 2026-09-14
 Job: act on CL-S04's baton item "hephaestus.json for the line", and give the line the status surface and playbook it never had.
 Changed: ROADMAP.md and SESSION_PLAYBOOK.md **created** (see below); CLAUDE.md (documents list, session protocol, docs zone); PORTFOLIO.md (effort-tag column added, all ten open CL rows back-tagged per S15; hephaestus roadmap row withdrawn). STUDIO (from this space): ../studio/LEDGER.md — rows **S17** and **S18** raised, both `⚡ ruling`. No doctrine edited; no hephaestus.json written.
