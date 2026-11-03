@@ -3,7 +3,8 @@
 **Status:** line founded 2026-09-11. **In flight:** 005 Flight Dispatch in **build** since
 2026-10-31: prototype closed on the evidence in hand and the pipeline lightened (CL-17,
 charter §2). Next: 005's lean GDD and **kit v0 on Unity 6.3**, both in Claude Code.
-**Waits on:** Gian — **CL-08** reference phone (⚡, now due) and studio **S38** (⚡); older rows
+**Waits on:** Gian — buying the reference phone (CL-08 ruled 2026-11-03: mid-range Galaxy A,
+A26 class) and studio **S38** (⚡); older rows
 in `PORTFOLIO.md`'s ledger.
 **Build slot: 005** (charter §6 — one line game in build at a time).
 
@@ -38,8 +39,8 @@ file tracks *work*; that file tracks *concepts and decisions*. If they ever disa
 | Build `proto/` — 10 timetables, §5 switches + `QUEUE_VISIBLE`, event log | 005 | **Cowork 005 space** | 🟢 | Built FD-S02, 2026-09-16; frozen as a record 2026-10-31. Solvability verified before any testing; install the studio preamble first (S18) |
 | ~~Six watched playtests~~ | 005 | device | — | **Withdrawn 2026-10-31 (CL-17).** 2 of 5 strangers played; the rest never came. The store's closed test replaces the cohort |
 | **Prototype verdict** → GREEN or kill | 005 | Code 005 | 🟢 | **Closed → build, 2026-10-31** (FD-S05). Deposited in `PORTFOLIO.md` C02 |
-| 005 lean GDD: MVP boundary + the one removal | 005 | Code 005 | 🟢 | **v0.1 SIGNED 2026-10-31** (FD-S07). Milestones M1–M5 in its §10; M1 needs kit v0 and CL-08 |
-| Kit v0 on Unity 6.3 | Kit | Claude Code | 🔴 | **Now the long pole**: every store release needs it. Charter §3's three conditions are kit invariants. Needs CL-08 |
+| 005 lean GDD: MVP boundary + the one removal | 005 | Code 005 | 🟢 | **v0.1 SIGNED 2026-10-31** (FD-S07). Milestones M1–M5 in its §10; M1 needs kit v0 and the reference phone |
+| Kit v0 on Unity 6.3 | Kit | Claude Code | 🔴 | **Now the long pole**: every store release needs it. Charter §3's three conditions are kit invariants. Reference phone ruled (CL-08); needs buying |
 
 ## Next (not started, not blocking)
 
