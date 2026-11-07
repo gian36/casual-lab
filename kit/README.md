@@ -49,6 +49,10 @@ resolves to `casual-lab/kit/package`.
 - `EventLog`: one JSON object per line in the app's own folder. **Local only, not
   analytics**: no network, no SDK, no identifiers. It exists so a session can read what
   happened in Gian's play (`adb pull`).
+  `EventLog.Bundle(maxChars)` packs every kept file into one text (gzip + base64 when long).
+- `KitShare.Text(subject, body, title)`: opens Android's own share sheet (`ACTION_SEND`), so
+  the player picks where text goes (Gmail, Drive ...). No permission, no network of its own.
+  Lets a play log travel without a USB cable. On desktop it writes a file and the clipboard.
 
 **Editor** (`Gabella.Kit.Editor`)
 

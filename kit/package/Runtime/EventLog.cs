@@ -65,6 +65,54 @@ namespace Gabella.Kit
             try { _w.WriteLine(sb.ToString()); } catch (Exception) { /* a full disk must not stop play */ }
         }
 
+        /// <summary>
+        /// Every kept log file as one block of text, for the player to send by hand (KitShare).
+        /// Plain JSONL with a "# file" line before each file when it fits in maxChars; otherwise
+        /// gzip + base64 (first line "GZIP-BASE64", wrapped at 76 so mail clients leave it alone).
+        /// Oldest files are dropped until it fits. files = how many went in.
+        /// </summary>
+        public static string Bundle(int maxChars, out int files)
+        {
+            var parts = new System.Collections.Generic.List<string>();   // newest first
+            try
+            {
+                string dir = Path.Combine(Application.persistentDataPath, "logs");
+                foreach (var f in Directory.GetFiles(dir, "*.jsonl").OrderByDescending(x => x))
+                {
+                    using (var fs = new FileStream(f, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
+                    using (var r = new StreamReader(fs, Encoding.UTF8))
+                        parts.Add("# file " + Path.GetFileName(f) + "\n" + r.ReadToEnd());
+                }
+            }
+            catch (Exception ex) { Debug.LogWarning("[kit] reading logs failed: " + ex.Message); }
+
+            for (int n = parts.Count; n > 0; n--)
+            {
+                string plain = string.Join("\n", parts.Take(n).Reverse());
+                if (plain.Length <= maxChars) { files = n; return plain; }
+                string packed = Pack(plain);
+                if (packed.Length <= maxChars) { files = n; return packed; }
+            }
+            files = 0;
+            return "";
+        }
+
+        private static string Pack(string text)
+        {
+            using (var ms = new MemoryStream())
+            {
+                using (var gz = new System.IO.Compression.GZipStream(ms, System.IO.Compression.CompressionLevel.Optimal, true))
+                {
+                    var bytes = new UTF8Encoding(false).GetBytes(text);
+                    gz.Write(bytes, 0, bytes.Length);
+                }
+                string b64 = Convert.ToBase64String(ms.ToArray());
+                var sb = new StringBuilder(b64.Length + b64.Length / 76 + 16).Append("GZIP-BASE64\n");
+                for (int i = 0; i < b64.Length; i += 76) sb.Append(b64, i, Math.Min(76, b64.Length - i)).Append('\n');
+                return sb.ToString();
+            }
+        }
+
         public static void Close()
         {
             _w?.Dispose();
