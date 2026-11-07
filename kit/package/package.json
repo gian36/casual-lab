@@ -1,0 +1,11 @@
+{
+  "name": "com.gabella.kit",
+  "version": "0.1.0",
+  "displayName": "Gabella Kit",
+  "description": "Toybox line kit v0: portrait boot, UI and drag helpers, desktop screenshots, a local event log, and the build guards required by LINE_CHARTER.md section 3.",
+  "unity": "6000.3",
+  "author": { "name": "Gabella" },
+  "dependencies": {
+    "com.unity.ugui": "2.0.0"
+  }
+}
