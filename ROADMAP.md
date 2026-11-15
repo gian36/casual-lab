@@ -41,7 +41,7 @@ file tracks *work*; that file tracks *concepts and decisions*. If they ever disa
 | **Prototype verdict** → GREEN or kill | 005 | Code 005 | 🟢 | **Closed → build, 2026-10-31** (FD-S05). Deposited in `PORTFOLIO.md` C02 |
 | 005 lean GDD: MVP boundary + the one removal | 005 | Code 005 | 🟢 | **v0.1 SIGNED 2026-10-31** (FD-S07). Milestones M1–M5 in its §10; M1 needs kit v0 and the reference phone |
 | Kit v0 on Unity 6.3 | Kit | Claude Code | 🟢 | **Built FD-S09, 2026-11-07** (`kit/package/`, `com.gabella.kit`): portrait boot, UI and drag helpers, desktop screenshots, local play log. Charter §3's three conditions are build failures (pinned manifest, APK permissions asserted, no unrequested packages). See `kit/README.md`. Grows per milestone; no ads/consent/IAP until M4 |
-| 005 M1: core loop in Unity, 5 shifts, new pre-dispatch | 005 | Code 005 | 🟡 | **Built FD-S09, 2026-11-07**: all 5 shifts solvable at 2.0 s per drag; desktop autoplay clears all 5. **Waits on Gian: play it on the S24 Ultra** (`flight-dispatch/unity/README.md`) — M1 is done when he finds pre-dispatch untold and wants to replay. Reference phone (CL-08) not bought, so unchecked there |
+| 005 M1: core loop in Unity, 5 shifts, new pre-dispatch | 005 | Code 005 | 🟡 | **Built FD-S09, 2026-11-07**: all 5 shifts solvable at 2.0 s per drag; desktop autoplay clears all 5. **Played by Gian 2026-11-15** on the S24 Ultra (APK by the `m1-apk` branch, log sent from the phone): all 5 shifts cleared, 51 pre-dispatches, five retries on shift 5. The "untold" half is not tested (he knew the mechanic). **Waits on Gian: FD16, the M1 verdict ⚡** (`flight-dispatch/results/M1_PLAY_GIAN_2026-11-15.md`). Reference phone (CL-08) not bought, so unchecked there |
 
 ## Next (not started, not blocking)
 
