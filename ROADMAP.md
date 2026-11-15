@@ -2,7 +2,7 @@
 
 **Status:** line founded 2026-09-11. **In flight:** 005 Flight Dispatch in **build** since
 2026-10-31: prototype closed on the evidence in hand and the pipeline lightened (CL-17,
-charter §2). Kit v0 and 005's M1 built 2026-11-07 (FD-S09); M1 played 2026-11-15 and judged **go** (FD16); next: M2.
+charter §2). Kit v0 and 005's M1 built 2026-11-07 (FD-S09); M1 played 2026-11-15 and judged **go** (FD16); M2 built 2026-11-15 (FD-S10), waiting on Gian's play.
 **Waits on:** Gian — buying the reference phone (CL-08 ruled 2026-11-03: mid-range Galaxy A,
 A26 class) and studio **S38** (⚡); older rows
 in `PORTFOLIO.md`'s ledger.
@@ -42,7 +42,7 @@ file tracks *work*; that file tracks *concepts and decisions*. If they ever disa
 | 005 lean GDD: MVP boundary + the one removal | 005 | Code 005 | 🟢 | **v0.1 SIGNED 2026-10-31** (FD-S07). Milestones M1–M5 in its §10; M1 needs kit v0 and the reference phone |
 | Kit v0 on Unity 6.3 | Kit | Claude Code | 🟢 | **Built FD-S09, 2026-11-07** (`kit/package/`, `com.gabella.kit`): portrait boot, UI and drag helpers, desktop screenshots, local play log. Charter §3's three conditions are build failures (pinned manifest, APK permissions asserted, no unrequested packages). See `kit/README.md`. Grows per milestone; no ads/consent/IAP until M4 |
 | 005 M1: core loop in Unity, 5 shifts, new pre-dispatch | 005 | Code 005 | 🟢 | **Built FD-S09, 2026-11-07**: all 5 shifts solvable at 2.0 s per drag; desktop autoplay clears all 5. **Played by Gian 2026-11-15** on the S24 Ultra (APK by the `m1-apk` branch, log sent from the phone): all 5 shifts cleared, 51 pre-dispatches, five retries on shift 5. The "untold" half is not tested (he knew the mechanic). **FD16 RULED by Gian 2026-11-15: go to M2** (`flight-dispatch/results/M1_PLAY_GIAN_2026-11-15.md`). Reference phone (CL-08) not bought, so unchecked there |
-| 005 M2: MVP content (20 shifts, 2 disruptions, continue, stars) | 005 | Code 005 | ⚪ | Unblocked by FD16. GDD §10: done when all 20 play end to end and the hard ones feel fair. Carries FD15 (still open), shift 5's wall (FD6) and the recommended untold stranger play (FD8/FD11) |
+| 005 M2: MVP content (20 shifts, 2 disruptions, continue, stars) | 005 | Code 005 | 🟡 | **Built FD-S10, 2026-11-15** (0.2.0-m2, APK on the `m1-apk` branch): 20 shifts drawn by search on a smooth density curve (no cliff: M1's shift-5 level is now shift 20), early arrival and equipment-out modelled in the rules the checker runs, free "recover one aircraft" with a seam for M4's ad, stars. All 20 solvable at 2.0 s per drag; desktop autoplay clears all 20. **Waiting on Gian:** play all 20 (go, tune or stop); rule `[OPEN-FD17]` (M2's build interpretations) and `[OPEN-FD18]` (star thresholds). FD15 still open. Recommended, not run: one untold stranger plays shifts 1–3 (FD8/FD11) |
 
 ## Next (not started, not blocking)
 

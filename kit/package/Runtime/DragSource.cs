@@ -31,6 +31,16 @@ namespace Gabella.Kit
 
         public static DragSource Active { get; private set; }
 
+        /// <summary>How far the ghost floats above the finger, in reference units.</summary>
+        public const float Lift = 90f;
+
+        /// <summary>
+        /// Screen position of the ghost's centre on the last move: what the player sees and aims
+        /// with. The finger is Lift below it, so a game that resolves drops under the finger alone
+        /// misses drops aimed with the ghost (005 M1: 6 "nowhere" drops on a phone).
+        /// </summary>
+        public static Vector2 GhostScreen { get; private set; }
+
         private static Canvas _ghostCanvas;
         private static Image _ghost;
         private static Text _ghostLabel;
@@ -96,7 +106,8 @@ namespace Gabella.Kit
             var root = (RectTransform)_ghostCanvas.transform;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(root, screen, null, out Vector2 local);
             // lift the ghost above the finger so the finger does not hide what is carried
-            ((RectTransform)_ghost.transform).anchoredPosition = local + new Vector2(0, 90);
+            ((RectTransform)_ghost.transform).anchoredPosition = local + new Vector2(0, Lift);
+            GhostScreen = screen + new Vector2(0, Lift * _ghostCanvas.scaleFactor);
         }
     }
 }
