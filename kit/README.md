@@ -43,7 +43,8 @@ resolves to `casual-lab/kit/package`.
 - `DragSource`: the reusable drag helper. The ghost lives on its own top canvas, so a drag
   survives the game moving or re-parenting what is being dragged (005's prototype lost
   drags when an arrival landed). It is only an input helper: the game decides what a drop
-  means.
+  means. The ghost floats `Lift` (90) units above the finger; `DragSource.GhostScreen` is
+  where it is, so a game can resolve drops where the player aims (added for 005 M2).
 - `KitShot`: if the player is launched with `--shot`, it can save its own frames. Used for
   desktop self-checks, because six of the spike's seven Unity defects compiled clean.
 - `EventLog`: one JSON object per line in the app's own folder. **Local only, not
