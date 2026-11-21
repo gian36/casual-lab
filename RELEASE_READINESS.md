@@ -88,6 +88,17 @@ ruling is S44 in `../studio/LEDGER.md`; CL-20 carries its consequence for the li
    later, and what that does to live titles, was not checked on Google's pages. It may make
    the choice reversible.
 
+**Gian's answer to ⚑1, 2026-11-21 (in 005's FD-S11; a direction, not a ruling of S44).**
+Gabella is **not registered** as a legal entity yet. Gian wants **the Gabella name on the
+store and his personal data off it**. He lives in the Dominican Republic and wants
+protection in the United States. A personal account can't give him that: even with
+"Gabella" as the developer name, it shows his legal name and country, and his full address
+once the game earns money [B]. So his aim points to an **organisation account, which first
+needs an entity**. The entity choice (a Dominican company or a US LLC) is a new studio-scope
+ruling, to be raised next to S44. It is a business, legal and tax question for his advisors.
+The trademark route is already recorded in `../studio/STUDIO_IDENTITY.md`: a US attorney is
+mandatory for a foreign-domiciled applicant.
+
 **Neutral summary for the ruling:** personal is fastest (days) and costs the closed test.
 Organisation costs a legal entity, a website and up to 30 days of D-U-N-S. Whether it saves
 the closed test is unconfirmed. For 005, the closed test is already planned off the critical
