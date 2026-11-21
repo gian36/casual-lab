@@ -3,6 +3,14 @@
 Every session appends exactly 5 lines. Newest first.
 
 ```
+[CL-S06] 2026-11-21
+Job: session X, release readiness for the line's first title (005 at M2): a plan that keeps the closed test (12 × 14) off the critical path, Google's own pages checked 2026-11-21.
+Changed: RELEASE_READINESS.md **created** (line-wide; back-schedule, account types, tester roster and opt-in, store prerequisites with lead times, Flight Dispatch name search, sources); PORTFOLIO.md (CL-19 to CL-24); ROADMAP.md (release-readiness row, waits-on); ../studio/LEDGER.md (S44).
+Rulings/[OPEN]: none ruled. RAISED S44 🔧 (account type, studio-wide), CL-19 🔧 (adopt the plan: the closed test opens at the first build that can be published), CL-20 ⚡ (line side of S44), CL-21 ⚡ (target audience), CL-22 ⚡ (privacy-policy host), CL-23 ⚡ (name clearance; trademark ⚑), CL-24 ⚡ (tester sources). Business, legal and tax questions flagged ⚑, not answered.
+Next for this area: Gian rules S44, then CL-19 to CL-24; then he creates the account and the tester Google Group, and 005's session aligns GDD §9/§10 and looks at PlaneFlow (RELEASE_READINESS.md §8).
+```
+
+```
 [FD-S05, from 005] 2026-10-31
 Job: lighten the Toybox pipeline after 005 stalled six weeks waiting for a stranger cohort.
 Changed: LINE_CHARTER.md §2 rewritten + changelog; PORTFOLIO.md (C02 → GREEN — Build with the verdict, build slot = 005, CL-17 landed); ROADMAP.md (status, 005 rows, kit v0 moved to Now, 005's surface = Claude Code).
